@@ -19,11 +19,14 @@ import json
 import pymysql
 import re
 
-# 這是用來過濾圖片 URL 的函數
+# 篩選出圖片 URL 的函式
 def filter_image_urls(image_str):
-    pattern = r'https?://[^ \t\n\r\f\v,"]+'  # 這個正則表達式會抓取所有 URL
-    urls = re.findall(pattern, image_str)
-    filtered = [url for url in urls if url.lower().endswith(('.jpg', '.png'))]  # 篩選 .jpg/.png 格式的圖片
+    # 在每個 https:// 或 http:// 前加逗號作為分隔符
+    image_str = re.sub(r'(https?://)', r',\1', image_str)
+    # 使用逗號分隔並提取 URL
+    urls = image_str.split(',')
+    # 篩選出以 .jpg 和 .png 結尾的圖片 URL
+    filtered = [url for url in urls if url.lower().endswith(('.jpg', '.png'))]
     return filtered
 
 # 連接資料庫
@@ -98,9 +101,7 @@ finally:
     connection.close()
 
 
-
 # FastAPI 部分
-
 app = FastAPI()
 
 @app.get("/api/attractions")
