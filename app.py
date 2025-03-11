@@ -32,7 +32,7 @@ def filter_image_urls(image_str):
 # 連接資料庫
 def get_db_connection():
     connection = pymysql.connect(
-        host='localhost',         
+        host='172.31.25.235',         
         user='root',      
         password='8745',  
         db='attraction',         
