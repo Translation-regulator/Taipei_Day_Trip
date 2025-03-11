@@ -32,7 +32,7 @@ def filter_image_urls(image_str):
 # 連接資料庫
 def get_db_connection():
     connection = pymysql.connect(
-        host='172.31.25.235',         
+        host='localhost',  # 請填入資料庫位置      
         user='root',      
         password='8745',  
         db='attraction',         
@@ -51,15 +51,15 @@ if 'result' in data and 'results' in data['result']:
 else:
     raise ValueError("JSON 格式錯誤，缺少 'result' 或 'results'")
 
-# 處理資料並插入資料庫
+# 連接資料庫
 connection = get_db_connection()
 try:
     with connection.cursor() as cursor:
-        # 建立 attractions 資料表 (請根據實際需求調整欄位與資料型態)
+        # 建立 attractions 資料表
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS attractions (
             id INT PRIMARY KEY AUTO_INCREMENT,
-            name VARCHAR(255),
+            name VARCHAR(255) UNIQUE,  # 加上 UNIQUE 避免重複
             category VARCHAR(255),
             description TEXT,
             address VARCHAR(255),
@@ -73,25 +73,30 @@ try:
         cursor.execute(create_table_sql)
         connection.commit()
 
-        # 循環資料並插入資料庫
+        # 插入資料前檢查是否已經存在
         for item in results:
-            if isinstance(item, dict):  # 確保 item 是字典
+            if isinstance(item, dict):  
                 name = item.get('name', '')
-                category = item.get('CAT', '')  # 用 'CAT' 欄位，若無則預設為空字串
-                description = item.get('description', '')  # 預設空字串
-                address = item.get('address', '')  # 預設空字串
-                transport = item.get('direction', '')  # 預設空字串
-                mrt = item.get('MRT', '')  # 預設空字串
+                category = item.get('CAT', '')  
+                description = item.get('description', '')  
+                address = item.get('address', '')  
+                transport = item.get('direction', '')  
+                mrt = item.get('MRT', '')  
                 latitude = float(item.get('latitude', 0)) if item.get('latitude') else None
                 longitude = float(item.get('longitude', 0)) if item.get('longitude') else None
-                images = filter_image_urls(item.get('file', ''))  # 圖片處理
-                insert_sql = """
-                INSERT INTO attractions (name, category, description, address, transport, mrt, latitude, longitude, images)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """
-                cursor.execute(insert_sql, (name, category, description, address, transport, mrt, latitude, longitude, json.dumps(images)))
-            else:
-                print(f"Skipping invalid item: {item}")  # 無效的 item
+                images = filter_image_urls(item.get('file', ''))  
+
+                # 新增檢查邏輯：確保資料不重複
+                check_sql = "SELECT COUNT(*) FROM attractions WHERE name = %s"
+                cursor.execute(check_sql, (name,))
+                (count,) = cursor.fetchone().values()
+
+                if count == 0:  # 只有當資料不存在時才插入
+                    insert_sql = """
+                    INSERT INTO attractions (name, category, description, address, transport, mrt, latitude, longitude, images)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(insert_sql, (name, category, description, address, transport, mrt, latitude, longitude, json.dumps(images)))
 
         connection.commit()
         print("資料匯入成功")
