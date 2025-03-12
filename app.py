@@ -1,8 +1,6 @@
 import os
-import sys
 import json
 import logging
-import re
 import pymysql
 from fastapi import FastAPI, Request, Query, HTTPException
 from fastapi.responses import FileResponse
@@ -37,76 +35,21 @@ def get_db_connection():
         logging.error("無法連接資料庫：%s", e)
         raise
 
-def filter_image_urls(image_str: str):
-    pattern = r'https?://[^\s,]+?\.(?:jpg|png)'
-    urls = re.findall(pattern, image_str, flags=re.IGNORECASE)
-    return urls
-
-def import_data():
-    try:
-        with open('data/taipei-attractions.json', encoding='utf-8') as f:
-            data = json.load(f)
-    except Exception as e:
-        logging.error("讀取 JSON 檔案失敗：%s", e)
-        return
-
-    if 'result' in data and 'results' in data['result']:
-        results = data['result']['results']
-    else:
-        logging.error("JSON 格式錯誤，缺少 'result' 或 'results'")
-        return
-
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            create_table_sql = """
-            CREATE TABLE IF NOT EXISTS attractions (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(255) UNIQUE,
-                category VARCHAR(255),
-                description TEXT,
-                address VARCHAR(255),
-                transport TEXT,
-                mrt VARCHAR(255),
-                latitude DOUBLE,
-                longitude DOUBLE,
-                images JSON
-            );
-            """
-            cursor.execute(create_table_sql)
-            connection.commit()
-
-            for item in results:
-                if isinstance(item, dict):
-                    name = item.get('name', '')
-                    category = item.get('CAT', '')
-                    description = item.get('description', '')
-                    address = item.get('address', '')
-                    transport = item.get('direction', '')
-                    mrt = item.get('MRT', '')
-                    latitude = float(item.get('latitude', 0)) if item.get('latitude') else None
-                    longitude = float(item.get('longitude', 0)) if item.get('longitude') else None
-                    images = filter_image_urls(item.get('file', ''))
-
-                    check_sql = "SELECT COUNT(*) as count FROM attractions WHERE name = %s"
-                    cursor.execute(check_sql, (name,))
-                    result_count = cursor.fetchone()
-                    if result_count and result_count.get('count', 0) == 0:
-                        insert_sql = """
-                        INSERT INTO attractions (name, category, description, address, transport, mrt, latitude, longitude, images)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        """
-                        cursor.execute(insert_sql, (
-                            name, category, description, address, transport, mrt, latitude, longitude, json.dumps(images)
-                        ))
-            connection.commit()
-            logging.info("資料匯入成功")
-    except Exception as e:
-        logging.error("資料匯入失敗：%s", e)
-    finally:
-        connection.close()
-
 app = FastAPI()
+
+# Static Pages (Never Modify Code in this Block)
+@app.get("/", include_in_schema=False)
+async def index(request: Request):
+	return FileResponse("./static/index.html", media_type="text/html")
+@app.get("/attraction/{id}", include_in_schema=False)
+async def attraction(request: Request, id: int):
+	return FileResponse("./static/attraction.html", media_type="text/html")
+@app.get("/booking", include_in_schema=False)
+async def booking(request: Request):
+	return FileResponse("./static/booking.html", media_type="text/html")
+@app.get("/thankyou", include_in_schema=False)
+async def thankyou(request: Request):
+	return FileResponse("./static/thankyou.html", media_type="text/html")
 
 @app.get("/")
 async def index(request: Request):
@@ -142,7 +85,4 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
         connection.close()
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "import":
-        import_data()
-    else:
-        uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
