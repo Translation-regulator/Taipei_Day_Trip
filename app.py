@@ -3,9 +3,10 @@ import json
 import logging
 import pymysql
 from fastapi import FastAPI, Request, Query, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import uvicorn
 from dotenv import load_dotenv
+from typing import List, Optional
 
 # 載入環境變數
 load_dotenv()
@@ -51,38 +52,113 @@ async def booking(request: Request):
 async def thankyou(request: Request):
 	return FileResponse("./static/thankyou.html", media_type="text/html")
 
-@app.get("/")
-async def index(request: Request):
-    return FileResponse("./static/index.html", media_type="text/html")
-
 @app.get("/api/attractions")
 def get_attractions(page: int = Query(0), keyword: str = Query(None)):
     per_page = 12
     offset = page * per_page
     connection = get_db_connection()
+    
     try:
         with connection.cursor() as cursor:
             if keyword:
-                sql = "SELECT * FROM attractions WHERE name LIKE %s LIMIT %s OFFSET %s"
-                cursor.execute(sql, ('%' + keyword + '%', per_page + 1, offset))
+                # 移除關鍵字兩端的空白
+                keyword = keyword.strip()
+                # 使用 LIKE 搜尋景點名稱 (name) 和捷運站名稱 (MRT)
+                sql = """
+                    SELECT * FROM attractions 
+                    WHERE name LIKE %s OR MRT LIKE %s 
+                    LIMIT %s OFFSET %s
+                """
+                cursor.execute(sql, ('%' + keyword + '%', '%' + keyword + '%', per_page + 1, offset))
             else:
+                # 沒有關鍵字，顯示所有景點
                 sql = "SELECT * FROM attractions LIMIT %s OFFSET %s"
                 cursor.execute(sql, (per_page + 1, offset))
+            
             records = cursor.fetchall()
             
+            # 如果資料超過每頁數量，表示有下一頁
             if len(records) > per_page:
                 nextPage = page + 1
                 records = records[:per_page]
             else:
                 nextPage = None
             
+            # 如果沒有資料，回傳500錯誤
+            if not records:
+                return JSONResponse(status_code=500, content={
+                    "error": True,
+                    "message": "所查詢的頁面不存在"
+                })
+            
+            # 轉換圖片欄位為 JSON 格式
             for record in records:
                 record['images'] = json.loads(record['images'])
+        
+        # 回傳資料，包含是否有下一頁
         return {"nextPage": nextPage, "data": records}
+    
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # 如果有錯誤，拋出 500 錯誤
+        return JSONResponse(status_code=500, content={
+            "error": True,
+            "message": "請按照情境提供對應的錯誤訊息"
+        })
+    
+    finally:
+        # 確保關閉連線
+        connection.close()
+
+
+@app.get("/api/attraction/{attractionId}")
+def get_attraction_detail(attractionId: int):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM attractions WHERE id = %s"
+            cursor.execute(sql, (attractionId,))
+            attraction = cursor.fetchone()
+            if not attraction:
+                # 回傳 400 錯誤及錯誤訊息
+                return JSONResponse(status_code=400, content={
+                    "error": True,
+                    "message": "對應的景點編號不存在"
+                })
+            attraction['images'] = json.loads(attraction['images'])
+        return {"data": attraction}
+    except Exception as e:
+        # 伺服器內部錯誤處理
+        return JSONResponse(status_code=500, content={
+            "error": True,
+            "message": "伺服器內部錯誤"
+        })
     finally:
         connection.close()
+
+@app.get("/api/mrts")
+def get_mrts():
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # 根據 mrt 分組並計算每個 mrt 的景點數量，依數量由大到小排序
+            sql = """
+                SELECT mrt, COUNT(*) as count 
+                FROM attractions 
+                WHERE mrt IS NOT NULL AND mrt <> ''
+                GROUP BY mrt 
+                ORDER BY count DESC
+            """
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            # 只回傳 mrt 名稱列表
+            mrts = [item['mrt'] for item in results]
+        return {"data": mrts}
+    except Exception as e:
+        # 當發生例外時，回傳符合 API 規格的錯誤訊息
+        return JSONResponse(status_code=500, content={"error": True, "message": "伺服器內部錯誤"})
+    finally:
+        connection.close()
+
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
