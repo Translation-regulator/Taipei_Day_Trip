@@ -16,10 +16,10 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 # 資料庫連線設定，建議以環境變數管理敏感資訊
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "8745")
-DB_NAME = os.getenv("DB_NAME", "attraction")
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
 DB_CHARSET = os.getenv("DB_CHARSET", "utf8mb4")
 
 def get_db_connection():
