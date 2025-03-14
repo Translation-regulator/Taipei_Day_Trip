@@ -65,14 +65,19 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
                 keyword = keyword.strip()
                 # 使用 LIKE 搜尋景點名稱 (name) 和捷運站名稱 (MRT)
                 sql = """
-                    SELECT * FROM attractions 
-                    WHERE name LIKE %s OR MRT LIKE %s 
+                    SELECT a.*, m.mrt FROM attractions a
+                    LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                    WHERE a.name LIKE %s OR m.mrt LIKE %s 
                     LIMIT %s OFFSET %s
                 """
                 cursor.execute(sql, ('%' + keyword + '%', '%' + keyword + '%', per_page + 1, offset))
             else:
                 # 沒有關鍵字，顯示所有景點
-                sql = "SELECT * FROM attractions LIMIT %s OFFSET %s"
+                sql = """
+                    SELECT a.*, m.mrt FROM attractions a
+                    LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                    LIMIT %s OFFSET %s
+                """
                 cursor.execute(sql, (per_page + 1, offset))
             
             records = cursor.fetchall()
@@ -115,7 +120,11 @@ def get_attraction_detail(attractionId: int):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM attractions WHERE id = %s"
+            sql = """
+                SELECT a.*, m.mrt FROM attractions a
+                LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                WHERE a.id = %s
+            """
             cursor.execute(sql, (attractionId,))
             attraction = cursor.fetchone()
             if not attraction:
@@ -142,10 +151,10 @@ def get_mrts():
         with connection.cursor() as cursor:
             # 根據 mrt 分組並計算每個 mrt 的景點數量，依數量由大到小排序
             sql = """
-                SELECT mrt, COUNT(*) as count 
-                FROM attractions 
-                WHERE mrt IS NOT NULL AND mrt <> ''
-                GROUP BY mrt 
+                SELECT m.mrt, COUNT(*) as count 
+                FROM attraction_mrt m
+                LEFT JOIN attractions a ON a.attraction_mrt_id = m.id
+                GROUP BY m.mrt 
                 ORDER BY count DESC
             """
             cursor.execute(sql)
@@ -161,4 +170,4 @@ def get_mrts():
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="localhost", port=8000, reload=True)

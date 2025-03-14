@@ -55,7 +55,17 @@ def import_data():
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            create_table_sql = """
+            # 建立 attraction_mrt 資料表
+            create_mrt_table_sql = """
+            CREATE TABLE IF NOT EXISTS attraction_mrt (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                mrt VARCHAR(255) UNIQUE
+            );
+            """
+            cursor.execute(create_mrt_table_sql)
+
+            # 建立 attractions 資料表，並加入 attraction_mrt_id 欄位
+            create_attractions_table_sql = """
             CREATE TABLE IF NOT EXISTS attractions (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 name VARCHAR(255) UNIQUE,
@@ -63,15 +73,18 @@ def import_data():
                 description TEXT,
                 address VARCHAR(255),
                 transport TEXT,
-                mrt VARCHAR(255),
                 latitude DOUBLE,
                 longitude DOUBLE,
-                images JSON
+                images JSON,
+                attraction_mrt_id INT,
+                FOREIGN KEY (attraction_mrt_id) REFERENCES attraction_mrt(id)
             );
             """
-            cursor.execute(create_table_sql)
+            cursor.execute(create_attractions_table_sql)
+
             connection.commit()
 
+            # 資料匯入邏輯
             for item in results:
                 if isinstance(item, dict):
                     name = item.get('name', '')
@@ -79,28 +92,53 @@ def import_data():
                     description = item.get('description', '')
                     address = item.get('address', '')
                     transport = item.get('direction', '')
-                    mrt = item.get('MRT', '')
+                    mrt = item.get('MRT', '') or ''
                     latitude = float(item.get('latitude', 0)) if item.get('latitude') else None
                     longitude = float(item.get('longitude', 0)) if item.get('longitude') else None
                     images = filter_image_urls(item.get('file', ''))
 
+                    # 檢查該景點是否已存在
                     check_sql = "SELECT COUNT(*) as count FROM attractions WHERE name = %s"
                     cursor.execute(check_sql, (name,))
                     result_count = cursor.fetchone()
+
+                    # 若該景點尚未存在，才進行插入
                     if result_count and result_count.get('count', 0) == 0:
+                        attraction_mrt_id = None
+                        # 只有當 mrt 欄位不為空時才處理
+                        if mrt.strip():
+                            # 檢查該 MRT 是否已經存在於 attraction_mrt 資料表
+                            check_mrt_sql = "SELECT id FROM attraction_mrt WHERE mrt = %s"
+                            cursor.execute(check_mrt_sql, (mrt,))
+                            mrt_result = cursor.fetchone()
+                            if mrt_result:
+                                # 若 MRT 存在，使用已存在的 ID
+                                attraction_mrt_id = mrt_result['id']
+                            else:
+                                # 若 MRT 不存在，插入新的 MRT 並取得其 ID
+                                insert_mrt_sql = """
+                                INSERT INTO attraction_mrt (mrt)
+                                VALUES (%s)
+                                """
+                                cursor.execute(insert_mrt_sql, (mrt,))
+                                attraction_mrt_id = cursor.lastrowid  # 取得新插入的 MRT ID
+
+                        # 插入 attractions 資料表
                         insert_sql = """
-                        INSERT INTO attractions (name, category, description, address, transport, mrt, latitude, longitude, images)
+                        INSERT INTO attractions (name, category, description, address, transport, latitude, longitude, images, attraction_mrt_id)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                         """
                         cursor.execute(insert_sql, (
-                            name, category, description, address, transport, mrt, latitude, longitude, json.dumps(images)
+                            name, category, description, address, transport, latitude, longitude, json.dumps(images), attraction_mrt_id
                         ))
+
             connection.commit()
             logging.info("資料匯入成功")
     except Exception as e:
         logging.error("資料匯入失敗：%s", e)
     finally:
         connection.close()
+
 
 if __name__ == "__main__":
     import_data()
