@@ -55,7 +55,7 @@ nav div{
 .hero {
     width: 100%;
     height: 480px;
-    background-image: url("/image/welcome.png"); /* 設置背景圖片 */
+    background-image: url("/static/image/welcome.png"); /* 設置背景圖片 */
     background-size: cover; /* 覆蓋整個區域 */
     background-position: center; /* 置中對齊 */
     background-repeat: no-repeat;
@@ -119,7 +119,7 @@ nav div{
     width: 60px;
     height: 46px;
     border: none;
-    background: url('/image/btn.png') no-repeat center;
+    background: url('/static/image/btn.png') no-repeat center;
     background-size: contain;
     cursor: pointer;
 }
@@ -168,11 +168,42 @@ nav div{
 
 .row-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 四欄 */
-    gap: 30px;                         /* 格子間隔 30px */
-    max-width: 1200px;                 /* 最大寬度 1200px */
-    padding: 15px;                     /* 四周 padding 15px */
-    margin: 0 auto;                    /* 置中 */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    padding: 15px;
+    margin: 0 auto;
 }
+
+.grid-item {
+    position: relative; /* 讓裡面的元素可以使用絕對定位 */
+    background: #E8E8E8;
+    border-radius: 1px;
+    overflow: hidden;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* 確保圖片不變形 */
+    border-bottom: 2px solid #ddd;
+}
+
+.grid-item p {
+    position: absolute;
+    bottom: 0; /* 確保文字在圖片的最底部 */
+    left: 0;
+    width: 100%; /* 確保背景覆蓋整個圖片寬度 */
+    height: 40px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff; /* 文字顏色為白色，與背景對比 */
+    background-color: rgba(0, 0, 0, 0.6); /* 半透明黑色背景 */
+    box-sizing: border-box; /* 確保 padding 計算在內 */
+    padding: 10px;
+    margin:0;
+
+}
+
 
 

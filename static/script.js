@@ -116,24 +116,67 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("列表:", list);
 });
 
-
-document.addEventListener('DOMContentLoaded', () => {
-    const grid = document.querySelector('.row-grid');
-
-    // 透過 fetch 從 API 取得資料
-    fetch('/api/attractions?page=0')
+document.addEventListener('DOMContentLoaded', function () {
+    // 呼叫後端 API，抓取捷運站列表
+    fetch('/api/mrts')
         .then(response => response.json())
         .then(data => {
-            // 假設 data.data 是一個景點陣列，且每個景點的 images 為圖片 URL 陣列
-            data.data.forEach(attraction => {
-                // 取第一張圖片作為示例
-                if (attraction.images && attraction.images.length > 0) {
-                    const img = document.createElement('img');
-                    img.src = attraction.images[0];
-                    img.alt = attraction.name;
-                    grid.appendChild(img);
-                }
+            const mrtList = data.data;
+            const listBar = document.querySelector('.list');  // 目標 div 位置
+
+            // 清空現有的項目
+            listBar.innerHTML = '';
+
+            // 將每個捷運站名稱添加到 list-bar 中
+            mrtList.forEach(mrt => {
+                const mrtElement = document.createElement('div');
+                mrtElement.textContent = mrt;
+                listBar.appendChild(mrtElement);
             });
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => console.error('Error fetching MRT stations:', error));
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const gridContainer = document.querySelector(".row-grid");
+
+    // 從後端 API 獲取景點資訊
+    fetch('/api/attractions')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.data) {
+            console.error("No attractions data received.");
+            return;
+        }
+            const attractions = data.data;
+
+            // 清空 grid 容器
+            gridContainer.innerHTML = '';
+
+            // 生成圖片元素
+            attractions.forEach(attraction => {
+                const card = document.createElement("div");
+                card.classList.add("grid-item");
+
+                // 建立圖片元素
+                const img = document.createElement("img");
+                img.src = attraction.image;
+                img.alt = attraction.name;
+
+                // 建立標題
+                const title = document.createElement("p");
+                title.textContent = attraction.name;
+
+                // 插入元素
+                card.appendChild(img);
+                card.appendChild(title);
+                gridContainer.appendChild(card);
+            });
+        })
+        .catch(error => console.error("Error loading attractions:", error));
 });

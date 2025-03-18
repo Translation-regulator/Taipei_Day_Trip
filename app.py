@@ -2,11 +2,12 @@ import os
 import json
 import logging
 import pymysql
-from fastapi import FastAPI, Request, Query, HTTPException
+from fastapi import FastAPI, Request, Query
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from dotenv import load_dotenv
-from typing import List, Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 # 載入環境變數
 load_dotenv()
@@ -37,6 +38,17 @@ def get_db_connection():
         raise
 
 app = FastAPI()
+# 掛載靜態檔案
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/image", StaticFiles(directory="static/image"), name="image")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Static Pages (Never Modify Code in this Block)
 @app.get("/", include_in_schema=False)
@@ -98,7 +110,10 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
             
             # 轉換圖片欄位為 JSON 格式
             for record in records:
-                record['images'] = json.loads(record['images'])
+                images = json.loads(record['images'])
+                record['image'] = images[0] if images else None  # 只取第一張圖
+                del record['images']  # 刪除原本的 images 欄位
+
         
         # 回傳資料，包含是否有下一頁
         return {"nextPage": nextPage, "data": records}
@@ -134,6 +149,9 @@ def get_attraction_detail(attractionId: int):
                     "message": "對應的景點編號不存在"
                 })
             attraction['images'] = json.loads(attraction['images'])
+            attraction['image'] = attraction['images'][0] if attraction['images'] else None  # 只取第一張圖
+            del attraction['images']  # 刪除原本的 images 欄位
+
         return {"data": attraction}
     except Exception as e:
         # 伺服器內部錯誤處理
@@ -167,7 +185,6 @@ def get_mrts():
         return JSONResponse(status_code=500, content={"error": True, "message": "伺服器內部錯誤"})
     finally:
         connection.close()
-
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="localhost", port=8000, reload=True)
