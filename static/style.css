@@ -1,6 +1,7 @@
 body {
     font-family: 'Noto Sans TC';
     margin:0;
+    padding-bottom: 80px;  /* 留出空間讓 footer 不會蓋過圖片 */
 }
 
 .container {
@@ -236,23 +237,29 @@ nav div{
 
 footer {
     background: rgba(117, 117, 117, 1);
-    margin-top: 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     display: flex;
-    justify-content: center;  /* 水平方向居中 */
-    align-items: center;      /* 垂直方向居中 */
-    text-align: center;       /* 確保文字在區塊內水平方向居中 */
-
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px 0;  /* 根據需要調整內邊距 */
+    margin-top: 15px;  /* 新增間距，讓 footer 與上方內容有 15px 的間距 */
 }
 
 .footer-text {
     font-size: 16px;
     color: rgba(255, 255, 255, 1);
     width: 100%;
-    height: 104px;
     display: flex;
-    justify-content: center;  /* 水平方向居中 */
-    align-items: center;      /* 垂直方向居中 */
+    justify-content: center;
+    align-items: center;
 }
+
+
 
 
 /* 平板模式 */
