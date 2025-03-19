@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const list = document.querySelector(".list");
     const leftArrow = document.querySelector(".arrow:first-of-type");
     const rightArrow = document.querySelector(".arrow:last-of-type");
-    const searchInput = document.querySelector("#search-input");  // 假設你的搜尋框ID為 #search-input
-    const searchButton = document.querySelector("#search-button");  // 假設你的搜尋按鈕ID為 #search-button
+    const searchInput = document.querySelector("#search-input");  
+    const searchButton = document.querySelector("#search-button");  
     const gridContainer = document.querySelector(".row-grid");
-    const mrtListContainer = document.querySelector(".list");  // 修改為正確的容器
+    const mrtListContainer = document.querySelector(".list"); 
     
-    const scrollAmount = 500; // 每次點擊滾動距離
+    const scrollAmount = 1; // 每次點擊滾動距離
     let nextPage = 0; // 初始化第一頁
     let isLoading = false; // 防止重複請求
     let lastKnownScrollPosition = 0; // 最後一次滾動位置
@@ -31,9 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
             timeoutId = setTimeout(() => {
                 intervalId = setInterval(() => {
                     if (direction === "left") {
-                        list.scrollLeft -= 100; // 增加每次滾動的距離
+                        list.scrollLeft -= 10; // 增加每次滾動的距離
                     } else {
-                        list.scrollLeft += 100;
+                        list.scrollLeft += 10;
                     }
                 }, 10); // 每 10 毫秒滾動一次
             }, 100); // 延遲開始連續滾動
@@ -166,9 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --------------------- MRT 站滑動功能 ---------------------
     function scrollMRTList(direction) {
-        const listWidth = list.scrollWidth;
         const visibleWidth = list.clientWidth;
-        const scrollAmount = direction === "left" ? -visibleWidth : visibleWidth;
+        const scrollAmount = direction === "left" ? -visibleWidth * 0.5 : visibleWidth * 0.5;  // 調整為 1.5 倍可見寬度
         list.scrollLeft += scrollAmount;
     }
 
