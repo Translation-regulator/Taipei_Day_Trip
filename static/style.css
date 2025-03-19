@@ -7,6 +7,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    top: 0;  /* 設定元素距離視口頂部 0px */
+    left: 0;  /* 可選，確保 nav 距離左邊也為 0 */
+    right: 0;  /* 可選，確保 nav 拉滿全寬 */
+    z-index: 1000;  /* 確保 nav 在其他元素之上 */
+    background-color: #fff;  /* 設定背景色 */
 }
 
 
@@ -15,7 +21,7 @@ nav {
     align-items: center;
     width: 1200px;
     justify-content: space-between;
-    
+
 }
 
 .nav-title {
@@ -23,7 +29,7 @@ nav {
     color: #448899;
     line-height: 34px;
     font-weight: 700;
-    padding:10px;
+    padding: 10px 0px;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -76,7 +82,6 @@ nav div{
 
 .overlay {
     color: white;
-    padding-left: 10px;
     border-radius: 10px;
 }
 
@@ -178,6 +183,7 @@ nav div{
     margin: 0 auto;
     padding-top: 15px;
     justify-content: center;
+
 }
 
 .grid-item {
@@ -225,17 +231,43 @@ nav div{
     color: rgba(117, 117, 117, 1);
     font-weight: 500;
 
+
+}
+
+footer {
+    background: rgba(117, 117, 117, 1);
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;  /* 水平方向居中 */
+    align-items: center;      /* 垂直方向居中 */
+    text-align: center;       /* 確保文字在區塊內水平方向居中 */
+
+}
+
+.footer-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 1);
+    width: 100%;
+    height: 104px;
+    display: flex;
+    justify-content: center;  /* 水平方向居中 */
+    align-items: center;      /* 垂直方向居中 */
 }
 
 
 /* 平板模式 */
 @media (max-width: 1200px) {
+    .nav-title {
+        padding-left: 10px;
+    }
+
     .overlay {
         width: 100%; /* 讓容器寬度為100% */
     }
 
     .img-container-hero {
         width: 100%;
+        padding-left: 10px;
     }
 
     .search-box {
