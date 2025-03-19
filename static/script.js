@@ -1,16 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // --------------------- 原有的左右箭頭與拖曳功能 ---------------------
+    // --------------------- 變數與初始化 ---------------------
     const list = document.querySelector(".list");
     const leftArrow = document.querySelector(".arrow:first-of-type");
     const rightArrow = document.querySelector(".arrow:last-of-type");
+    const searchInput = document.querySelector("#search-input");  // 假設你的搜尋框ID為 #search-input
+    const searchButton = document.querySelector("#search-button");  // 假設你的搜尋按鈕ID為 #search-button
+    const gridContainer = document.querySelector(".row-grid");
+    const mrtListContainer = document.querySelector(".list");  // 修改為正確的容器
+    
     const scrollAmount = 500; // 每次點擊滾動距離
+    let nextPage = 0; // 初始化第一頁
+    let isLoading = false; // 防止重複請求
+    let lastKnownScrollPosition = 0; // 最後一次滾動位置
+    let ticking = false; // 防止重複觸發滾動事件
 
-    if (!list || !leftArrow || !rightArrow) {
-        console.error("無法找到 `.list` 或 `.arrow`，請檢查 HTML 結構！");
-        return;
-    }
-
-    // 封裝左右箭頭的連續滾動功能
+    // --------------------- 左右箭頭與拖曳功能 ---------------------
     function addContinuousScroll(button, direction) {
         let timeoutId;
         let intervalId;
@@ -46,96 +50,70 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 套用到左右箭頭
     addContinuousScroll(leftArrow, "left");
     addContinuousScroll(rightArrow, "right");
 
-    // 列表區域的拖曳功能（移除滑鼠經過時的自動滾動）
-    let isDragging = false;
-    let dragStartX;
-    let dragScrollStart;
+    // --------------------- MRT清單與篩選功能 ---------------------
+    function loadMRTStations() {
+        fetch('/api/mrts')
+            .then(response => response.json())
+            .then(data => {
+                const mrtList = data.data;
+                mrtList.forEach(mrt => {
+                    const mrtElement = document.createElement('div');
+                    mrtElement.textContent = mrt;
+                    mrtElement.classList.add('mrt-item');
+                    mrtElement.addEventListener("click", () => {
+                        // 當選擇 MRT 站時，將 MRT 站名放入搜尋框並觸發搜尋
+                        searchInput.value = mrt;
+                        searchAttractions(mrt); // 使用 MRT 名稱作為關鍵字觸發搜尋
+                    });
+                    mrtListContainer.appendChild(mrtElement);
+                });
+            })
+            .catch(error => console.error('Error fetching MRT stations:', error));
+    }
 
-    list.addEventListener("mousedown", (e) => {
-        isDragging = false;
-        dragStartX = e.pageX;
-        dragScrollStart = list.scrollLeft;
-        list.style.cursor = "grabbing";
-    });
-
-    list.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-            const walk = (e.pageX - dragStartX) * 3; // 調整拖曳速度
-            list.scrollLeft = dragScrollStart - walk;
+    // --------------------- 關鍵字搜尋功能 ---------------------
+    searchButton.addEventListener("click", () => {
+        const keyword = searchInput.value.trim();
+        if (keyword) {
+            searchAttractions(keyword);
         }
     });
 
-    list.addEventListener("mouseup", () => {
-        list.style.cursor = "grab";
-        if (isDragging) return;
-    });
-
-    list.addEventListener("mouseleave", () => {
-        list.style.cursor = "grab";
-    });
-
-    // --------------------- MRT站清單載入 ---------------------
-    fetch('/api/mrts')
-        .then(response => response.json())
-        .then(data => {
-            const mrtList = data.data;
-            const listBar = document.querySelector('.list');  // 目標 div 位置
-
-            // 清空現有的項目
-            listBar.innerHTML = '';
-
-            // 將每個捷運站名稱添加到 list-bar 中
-            mrtList.forEach(mrt => {
-                const mrtElement = document.createElement('div');
-                mrtElement.textContent = mrt;
-                listBar.appendChild(mrtElement);
-            });
-        })
-        .catch(error => console.error('Error fetching MRT stations:', error));
-
-    // --------------------- 景點資料載入與無限捲動 ---------------------
-    console.log("初始化載入景點");
-
-    const gridContainer = document.querySelector(".row-grid");
-    let nextPage = 0; // 初始化第一頁
-    let isLoading = false; // 防止重複請求
-    let lastKnownScrollPosition = 0; // 最後一次滾動位置
-    let ticking = false; // 防止重複觸發滾動事件
+    // 關鍵字搜尋API請求
+    function searchAttractions(keyword) {
+        nextPage = 0;  // 重置為頁面1
+        gridContainer.innerHTML = '';  // 清空現有的列表
+        loadAttractions(keyword);
+    }
 
     // 加載景點數據
-    function loadAttractions(page) {
+    function loadAttractions(keyword) {
         if (isLoading || nextPage === null) return;
         isLoading = true;
 
-        fetch(`/api/attractions?page=${page}`)
+        fetch(`/api/attractions?page=${nextPage}&keyword=${keyword}`)
             .then(response => response.json())
             .then(data => {
-                console.log("API 回應:", data); // 確認 API 回應是否正確
                 if (!data.data || data.data.length === 0) return;
 
                 data.data.forEach(attraction => {
                     const card = document.createElement("div");
                     card.classList.add("grid-item");
 
-                    // 圖片容器
                     const imgContainer = document.createElement("div");
                     imgContainer.classList.add("img-container");
 
-                    // 圖片
                     const img = document.createElement("img");
                     img.src = attraction.image;
                     img.alt = attraction.name;
 
-                    // 標題
                     const title = document.createElement("h3");
                     title.textContent = attraction.name;
                     title.classList.add("title-overlay");
 
-                    // 資訊欄 (category + mrt)
                     const infoBar = document.createElement("div");
                     infoBar.classList.add("info-bar");
 
@@ -147,10 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     mrt.textContent = attraction.mrt;
                     mrt.classList.add("info-text");
 
-                    // 組合 DOM 元素
                     imgContainer.appendChild(img);
                     imgContainer.appendChild(title);
-
                     infoBar.appendChild(mrt);
                     infoBar.appendChild(category);
 
@@ -160,9 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     gridContainer.appendChild(card);
                 });
 
-                // 更新 nextPage
                 nextPage = data.nextPage;
-                console.log("下一頁:", nextPage);
                 isLoading = false;
             })
             .catch(error => {
@@ -171,19 +145,16 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // 當滾動事件發生時，觸發加載新資料
+    // --------------------- 滾動事件與無限滾動 ---------------------
     function handleScroll() {
         lastKnownScrollPosition = window.scrollY;
 
         if (!ticking) {
             window.requestAnimationFrame(() => {
-                // 判斷是否滾動到達頁面底部，並且還有下一頁
                 const bottom = document.documentElement.scrollHeight - window.innerHeight;
                 if (lastKnownScrollPosition >= bottom - 200 && nextPage !== null && !isLoading) {
-                    console.log("觸發無限滾動，加載下一頁:", nextPage);
-                    loadAttractions(nextPage);
+                    loadAttractions(searchInput.value.trim());
                 }
-
                 ticking = false;
             });
 
@@ -191,16 +162,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // 設置滾動監聽器
     window.addEventListener("scroll", handleScroll);
 
-    // 初始載入第一頁資料
-    loadAttractions(0);
+    // --------------------- MRT 站滑動功能 ---------------------
+    function scrollMRTList(direction) {
+        const listWidth = list.scrollWidth;
+        const visibleWidth = list.clientWidth;
+        const scrollAmount = direction === "left" ? -visibleWidth : visibleWidth;
+        list.scrollLeft += scrollAmount;
+    }
 
-    // 檢查如果頁面已經滾動到底部，則自動載入下一頁
+    leftArrow.addEventListener("click", () => scrollMRTList("left"));
+    rightArrow.addEventListener("click", () => scrollMRTList("right"));
+
+    // 初始載入MRT站與景點數據
+    loadMRTStations();
+    loadAttractions(''); // 預設載入所有景點
+
+    // 檢查頁面是否自動滾動到底部
     const bottom = document.documentElement.scrollHeight - window.innerHeight;
     if (window.scrollY >= bottom - 200 && nextPage !== null && !isLoading) {
-        console.log("頁面初次載入即已到達底部，自動加載下一頁");
-        loadAttractions(nextPage);
+        loadAttractions('');
     }
 });
