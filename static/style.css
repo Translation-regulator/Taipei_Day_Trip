@@ -161,9 +161,8 @@ nav div{
 }
 
 .list div {
-    padding: 10px 20px;
-    margin-right: 10px;
-    margin-left: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     cursor: pointer;
     border-radius: 5px;
     font-weight: 500;
@@ -175,9 +174,9 @@ nav div{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px;
-    max-width: 1170px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 15px;
+    padding-top: 15px;
     justify-content: center;
 }
 
@@ -229,5 +228,97 @@ nav div{
 }
 
 
+/* 平板模式 */
+@media (max-width: 1200px) {
+    .overlay {
+        width: 100%; /* 讓容器寬度為100% */
+    }
+
+    .img-container-hero {
+        width: 100%;
+    }
+
+    .search-box {
+        width: 90%;
+        height: 46px;
+    }
+
+    .row-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .list-bar {
+        width: calc(100% - 20px);
+
+    }
+}
+
+/* 手機模式 */
+@media (max-width: 360px) {
+    .nav-title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+
+    .nav-login, .nav-reserve {
+        font-size: 14px;
+    }
+
+    .img-container-hero{
+        width: 100%;
+        display: flex;
+
+    }
+    .hero {
+        width: 100%;
+        height: 320px;
+        background-image: url("/static/image/mobile-welcome.png"); 
+        background-size: cover; 
+        background-position: center; 
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .overlay {
+        width: 100%; /* 讓容器寬度為100% */
+        max-width: 100%;
+        margin: 0 ;
+        padding-right: 10px;
+    }
+
+    .list-bar {
+        width: calc(100% - 20px);
+        margin:0;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .search-box {
+        width: 90%;
+        height: 46px;
+    }
+
+    .search-button {
+        width: 60px !important;
+        height: 46px !important;
+    }
+
+    #search {
+        width: 80%;
+    }
+
+    .row-grid {
+        grid-template-columns: 1fr;
+    }
 
 
+}
+
+.arrow {
+    padding: 0 !important;
+}

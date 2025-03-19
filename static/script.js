@@ -58,15 +58,18 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch('/api/mrts')
             .then(response => response.json())
             .then(data => {
+                // 清空 MRT 清單，避免重複載入
+                mrtListContainer.innerHTML = "";
                 const mrtList = data.data;
                 mrtList.forEach(mrt => {
                     const mrtElement = document.createElement('div');
                     mrtElement.textContent = mrt;
                     mrtElement.classList.add('mrt-item');
                     mrtElement.addEventListener("click", () => {
-                        // 當選擇 MRT 站時，將 MRT 站名放入搜尋框並觸發搜尋
+                        // 當選擇 MRT 站時，將 MRT 站名放入搜尋框並以 MRT 模式觸發搜尋，
+                        // 這裡傳入第二個參數 true 表示「精準依據 attraction.mrt 進行比對」
                         searchInput.value = mrt;
-                        searchAttractions(mrt); // 使用 MRT 名稱作為關鍵字觸發搜尋
+                        searchAttractions(mrt, true);
                     });
                     mrtListContainer.appendChild(mrtElement);
                 });
@@ -78,28 +81,38 @@ document.addEventListener("DOMContentLoaded", () => {
     searchButton.addEventListener("click", () => {
         const keyword = searchInput.value.trim();
         if (keyword) {
-            searchAttractions(keyword);
+            // 預設為一般關鍵字搜尋
+            searchAttractions(keyword, false);
         }
     });
 
-    // 關鍵字搜尋API請求
-    function searchAttractions(keyword) {
+    // 搜尋景點函式，第二個參數 isMRTSearch 預設為 false，
+    // 若為 true 則代表以 MRT 站名作為精準搜尋條件
+    function searchAttractions(keyword, isMRTSearch = false) {
         nextPage = 0;  // 重置為頁面1
         gridContainer.innerHTML = '';  // 清空現有的列表
-        loadAttractions(keyword);
+        loadAttractions(keyword, isMRTSearch);
     }
 
-    // 加載景點數據
-    function loadAttractions(keyword) {
+    // --------------------- 加載景點數據 ---------------------
+    function loadAttractions(keyword, isMRTSearch = false) {
         if (isLoading || nextPage === null) return;
         isLoading = true;
 
         fetch(`/api/attractions?page=${nextPage}&keyword=${keyword}`)
             .then(response => response.json())
             .then(data => {
-                if (!data.data || data.data.length === 0) return;
+                if (!data.data || data.data.length === 0) {
+                    isLoading = false;
+                    return;
+                }
 
                 data.data.forEach(attraction => {
+                    // 如果是 MRT 搜尋，僅保留 attraction.mrt 與 keyword 完全相符的資料
+                    if (isMRTSearch && attraction.mrt !== keyword) {
+                        return;
+                    }
+
                     const card = document.createElement("div");
                     card.classList.add("grid-item");
 
@@ -153,7 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
             window.requestAnimationFrame(() => {
                 const bottom = document.documentElement.scrollHeight - window.innerHeight;
                 if (lastKnownScrollPosition >= bottom - 200 && nextPage !== null && !isLoading) {
-                    loadAttractions(searchInput.value.trim());
+                    // 若使用者在一般搜尋狀態，直接以目前輸入框內容搜尋
+                    // 若為 MRT 搜尋，可根據需求決定是否持續 MRT 模式（此範例預設一般搜尋）
+                    loadAttractions(searchInput.value.trim(), false);
                 }
                 ticking = false;
             });
@@ -167,14 +182,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // --------------------- MRT 站滑動功能 ---------------------
     function scrollMRTList(direction) {
         const visibleWidth = list.clientWidth;
-        const scrollAmount = direction === "left" ? -visibleWidth * 0.5 : visibleWidth * 0.5;  // 調整為 1.5 倍可見寬度
+        const scrollAmount = direction === "left" ? -visibleWidth * 0.5 : visibleWidth * 0.5;
         list.scrollLeft += scrollAmount;
     }
 
     leftArrow.addEventListener("click", () => scrollMRTList("left"));
     rightArrow.addEventListener("click", () => scrollMRTList("right"));
 
-    // 初始載入MRT站與景點數據
+    // --------------------- 初始載入 MRT 站與景點數據 ---------------------
     loadMRTStations();
     loadAttractions(''); // 預設載入所有景點
 
