@@ -7,7 +7,6 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from dotenv import load_dotenv
-from fastapi.middleware.cors import CORSMiddleware
 
 # 載入環境變數
 load_dotenv()
@@ -41,14 +40,6 @@ app = FastAPI()
 # 掛載靜態檔案
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/image", StaticFiles(directory="static/image"), name="image")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Static Pages (Never Modify Code in this Block)
 @app.get("/", include_in_schema=False)
