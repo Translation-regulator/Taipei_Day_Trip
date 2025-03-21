@@ -2,11 +2,11 @@ import os
 import json
 import logging
 import pymysql
-from fastapi import FastAPI, Request, Query, HTTPException
+from fastapi import FastAPI, Request, Query
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 from dotenv import load_dotenv
-from typing import List, Optional
 
 # 載入環境變數
 load_dotenv()
@@ -37,6 +37,9 @@ def get_db_connection():
         raise
 
 app = FastAPI()
+# 掛載靜態檔案
+app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/image", StaticFiles(directory="static/image"), name="image")
 
 # Static Pages (Never Modify Code in this Block)
 @app.get("/", include_in_schema=False)
@@ -65,14 +68,19 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
                 keyword = keyword.strip()
                 # 使用 LIKE 搜尋景點名稱 (name) 和捷運站名稱 (MRT)
                 sql = """
-                    SELECT * FROM attractions 
-                    WHERE name LIKE %s OR MRT LIKE %s 
+                    SELECT a.*, m.mrt FROM attractions a
+                    LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                    WHERE a.name LIKE %s OR m.mrt LIKE %s 
                     LIMIT %s OFFSET %s
                 """
                 cursor.execute(sql, ('%' + keyword + '%', '%' + keyword + '%', per_page + 1, offset))
             else:
                 # 沒有關鍵字，顯示所有景點
-                sql = "SELECT * FROM attractions LIMIT %s OFFSET %s"
+                sql = """
+                    SELECT a.*, m.mrt FROM attractions a
+                    LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                    LIMIT %s OFFSET %s
+                """
                 cursor.execute(sql, (per_page + 1, offset))
             
             records = cursor.fetchall()
@@ -93,7 +101,10 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
             
             # 轉換圖片欄位為 JSON 格式
             for record in records:
-                record['images'] = json.loads(record['images'])
+                images = json.loads(record['images'])
+                record['image'] = images[0] if images else None  # 只取第一張圖
+                del record['images']  # 刪除原本的 images 欄位
+
         
         # 回傳資料，包含是否有下一頁
         return {"nextPage": nextPage, "data": records}
@@ -115,7 +126,11 @@ def get_attraction_detail(attractionId: int):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            sql = "SELECT * FROM attractions WHERE id = %s"
+            sql = """
+                SELECT a.*, m.mrt FROM attractions a
+                LEFT JOIN attraction_mrt m ON a.attraction_mrt_id = m.id
+                WHERE a.id = %s
+            """
             cursor.execute(sql, (attractionId,))
             attraction = cursor.fetchone()
             if not attraction:
@@ -125,6 +140,9 @@ def get_attraction_detail(attractionId: int):
                     "message": "對應的景點編號不存在"
                 })
             attraction['images'] = json.loads(attraction['images'])
+            attraction['image'] = attraction['images'][0] if attraction['images'] else None  # 只取第一張圖
+            del attraction['images']  # 刪除原本的 images 欄位
+
         return {"data": attraction}
     except Exception as e:
         # 伺服器內部錯誤處理
@@ -142,10 +160,10 @@ def get_mrts():
         with connection.cursor() as cursor:
             # 根據 mrt 分組並計算每個 mrt 的景點數量，依數量由大到小排序
             sql = """
-                SELECT mrt, COUNT(*) as count 
-                FROM attractions 
-                WHERE mrt IS NOT NULL AND mrt <> ''
-                GROUP BY mrt 
+                SELECT m.mrt, COUNT(*) as count 
+                FROM attraction_mrt m
+                LEFT JOIN attractions a ON a.attraction_mrt_id = m.id
+                GROUP BY m.mrt 
                 ORDER BY count DESC
             """
             cursor.execute(sql)
@@ -159,6 +177,5 @@ def get_mrts():
     finally:
         connection.close()
 
-
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="localhost", port=8000, reload=True)
