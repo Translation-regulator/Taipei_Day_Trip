@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     imgContainer.classList.add("img-container");
 
                     const img = document.createElement("img");
-                    img.src = attraction.image;
+                    img.src = attraction.images[0];
                     img.alt = attraction.name;
 
                     const title = document.createElement("h3");
