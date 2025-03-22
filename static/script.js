@@ -13,6 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let isLoading = false;
     let lastKnownScrollPosition = 0;
     let ticking = false;
+    // --------------------- 點擊 "台北一日遊" 標題可以返回首頁 == 重新整理功能 ---------------------
+    function homepage(className) {
+        const button = document.querySelector(`.${className}`); // 選取 class 為 nav-title 的元素
+        if (button) {
+            button.addEventListener("click", () => {
+                window.location.href = "/";
+            });
+        } else {
+            console.error(`Element with class "${className}" not found.`);
+        }
+    }
+    homepage("nav-title");
+    
 
     // --------------------- 左右箭頭與拖曳功能 ---------------------
     function addContinuousScroll(button, direction) {
