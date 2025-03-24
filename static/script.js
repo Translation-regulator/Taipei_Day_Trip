@@ -79,20 +79,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadAttractions(keyword, isMRTSearch = false) {
         if (isLoading || nextPage === null) return;
         isLoading = true;
-
+    
         fetchData(`/api/attractions?page=${nextPage}&keyword=${keyword}`).then(data => {
             if (!data.data || data.data.length === 0) {
                 isLoading = false;
                 return;
             }
-
+    
             data.data.forEach(attraction => {
                 if (isMRTSearch && attraction.mrt !== keyword) return;
-
+    
                 const card = createAttractionCard(attraction);
-                gridContainer.appendChild(card);
+                gridContainer.appendChild(card);  // 確保卡片被正確加入
             });
-
+    
             nextPage = data.nextPage;
             isLoading = false;
         }).catch(error => {
@@ -100,43 +100,54 @@ document.addEventListener("DOMContentLoaded", () => {
             isLoading = false;
         });
     }
+    
 
     function createAttractionCard(attraction) {
         const card = document.createElement("div");
         card.classList.add("grid-item");
-
+    
         const imgContainer = document.createElement("div");
         imgContainer.classList.add("img-container");
-
+    
+        // 創建 <a> 標籤 --> 只包住圖片
+        const link = document.createElement("a");
+        link.href = `/attraction/${attraction.id}`;
+    
         const img = document.createElement("img");
-        img.src = attraction.images[0];
+        img.src = attraction.images[0];  // 顯示第一張圖片
         img.alt = attraction.name;
-
+    
+        // 把圖片放進 <a>，確保只有圖片是超連結
+        link.appendChild(img);
+        imgContainer.appendChild(link);
+    
         const title = document.createElement("h3");
         title.textContent = attraction.name;
         title.classList.add("title-overlay");
-
+    
         const infoBar = document.createElement("div");
         infoBar.classList.add("info-bar");
-
+    
         const category = document.createElement("span");
         category.textContent = attraction.category;
         category.classList.add("info-text");
-
+    
         const mrt = document.createElement("span");
         mrt.textContent = attraction.mrt;
         mrt.classList.add("info-text");
-
-        imgContainer.appendChild(img);
+    
         imgContainer.appendChild(title);
         infoBar.appendChild(mrt);
         infoBar.appendChild(category);
-
+    
         card.appendChild(imgContainer);
         card.appendChild(infoBar);
-
+    
         return card;
     }
+    
+    
+    
 
     // --------------------- 無限滾動 ---------------------
     function handleScroll() {
