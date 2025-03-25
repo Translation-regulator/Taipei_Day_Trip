@@ -60,13 +60,20 @@ async function fetchAttractionDetails(attractionId) {
 }
 
 function renderAttractionDetails(attraction) {
-  const { name, category, mrt, images: attractionImages } = attraction;
+  const { name, category, mrt, description, address, transport, images: attractionImages } = attraction;
+  
   const attractionTitle = document.querySelector('.attraction-title');
   const attractionCategoryMRT = document.querySelector('.attraction-category-mrt');
+  const attractionDescription = document.querySelector('.attraction-description');
+  const descriptionAddress = document.querySelector('.attraction-address');
+  const descriptionTransport = document.querySelector('.attraction-transport');
 
   attractionTitle.textContent = name;
   attractionCategoryMRT.innerHTML = `${category} <span>at ${mrt}</span>`;
-  
+  attractionDescription.textContent = description;
+  descriptionAddress.textContent = address;
+  descriptionTransport.textContent = transport;
+
   images = attractionImages;
   renderImageSlideshow();
 }

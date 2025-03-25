@@ -1,206 +1,450 @@
 /* 頁面基本樣式 */
 body {
-    font-family: 'Noto Sans TC';
-    margin: 0;
-    padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
-  }
-  
-  /* 主要容器設定 */
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff;
-    border-bottom: 1px solid rgba(232, 232, 232, 1);
-  }
-  
-  /* 導航條設定 */
-  nav {
-    display: flex;
-    align-items: center;
-    width: 1200px;
-    justify-content: space-between;
-  }
-  
-  .nav-title {
-    font-size: 30px;
-    color: #448899;
-    font-weight: 700;
-    padding: 10px 0;
-    text-align: center;
-    cursor: pointer;
-  }
-  
-  nav div {
-    display: flex;
-    align-items: center;
-  }
-  
-  .nav-reserve, .nav-login {
-    font-weight: 500;
-    font-size: 16px;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  /* 景點圖片區域 */
-  .attraction-outer-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-  }
-  
-  /* attraction-container 寬度設定 */
-  .attraction-container {
-    width: 1200px;
-    margin: 0 auto; /* 使其水平居中 */
-    display: flex;
-    justify-content: space-between; /* 讓圖片區和其他內容有適當的間距 */
-    padding: 20px;
-  }
-  
-  /* 圖片區域設定 */
-  .attraction-image-container {
-    width: 540px;
-    height: 400px;
-    position: relative; /* 使得箭頭和點點可以被定位 */
-    overflow: hidden; /* 超出範圍的內容將被隱藏 */
-  }
-  
-  .attraction-image {
-    width: 100%;
-    height: 100%;
-    background-size: cover; /* 確保背景圖片完全覆蓋容器 */
-    background-position: center; /* 保持圖片居中 */
-    position: absolute; /* 使背景圖片能覆蓋整個容器 */
-    top: 0;
-    left: 0;
-  }
-  
-  
+font-family: 'Noto Sans TC';
+margin: 0;
+padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
+}
+
+/* 主要容器設定 */
+.container {
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: #fff;
+border-bottom: 1px solid rgba(232, 232, 232, 1);
+}
+
+/* 導航條設定 */
+nav {
+display: flex;
+align-items: center;
+max-width: 1200px;
+width: 90%;
+justify-content: space-between;
+}
+
+.nav-title {
+font-size: 30px;
+color: #448899;
+font-weight: 700;
+padding: 10px 0;
+text-align: center;
+cursor: pointer;
+}
+
+nav div {
+  display: flex;
+  align-items: center;
+}
+
+.nav-reserve, .nav-login {
+  font-weight: 500;
+  font-size: 16px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.nav-login {
+  padding-right: 0;
+}
+
+/* 景點圖片區域 */
+.attraction-outer-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+/* attraction-container 寬度設定 */
+.attraction-container {
+  max-width: 1200px;
+  width:90%;
+  margin: 0 auto; /* 使其水平居中 */
+  display: flex;
+  justify-content: space-between; /* 讓圖片區和其他內容有適當的間距 */
+  border-bottom: 1px solid rgba(232, 232, 232, 1);
+  padding-bottom: 40px;
+}
+
+/* 圖片區域設定 */
+.attraction-image-container {
+  width: 100%;
+  max-width: 540px; /* 限制最大寬度 */
+  height: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+}
+
+/* 確保圖片可縮放 */
+.attraction-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover; /* 確保背景圖片完全覆蓋容器 */
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.attraction-info {
+  width: 100%;  /* 預設占滿可用空間 */
+  max-width: 600px; /* 最大寬度 600px */
+  margin-left: auto; /* 靠右對齊 */
+}
+
 /* 設定箭頭的基本樣式 */
 .arrow-left, .arrow-right {
-    position: absolute; /* 使箭頭定位在圖片的左右 */
-    top: 50%;
-    transform: translateY(-50%); /* 使箭頭垂直置中 */
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.5); /* 背景顏色 */
-    color: white;
-    cursor: pointer;
-    border-radius: 50%; /* 圓形的箭頭 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10; /* 確保箭頭在圖片之上 */
-  }
-  
-  /* 設定左箭頭 */
-  .arrow-left {
-    left: 10px; /* 左側距離 */
-    background-image: url('/static/image/left-row.png'); /* 左箭頭圖片 */
-    background-size: contain; /* 保證圖片完整顯示 */
-    background-repeat: no-repeat; /* 防止圖片重複 */
-    background-position: center; /* 圖片居中 */
-  }
-  
-  /* 設定右箭頭 */
-  .arrow-right {
-    right: 10px; /* 右側距離 */
-    background-image: url('/static/image/right-row.png'); /* 右箭頭圖片 */
-    background-size: contain; /* 保證圖片完整顯示 */
-    background-repeat: no-repeat; /* 防止圖片重複 */
-    background-position: center; /* 圖片居中 */
-  }
-  
-  /* 點點導航 */
-  .image-dots {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 5px;
-    z-index: 10;
-  }
-  
-  .image-dots .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: rgba(204, 204, 204, 1);
-    cursor: pointer;
-  }
-  
-  /* 當前圖片的點 */
-  .image-dots .dot.active {
-    background-color: rgba(68, 136, 153, 1);
-  }
+  position: absolute; /* 使箭頭定位在圖片的左右 */
+  top: 50%;
+  transform: translateY(-50%); /* 使箭頭垂直置中 */
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5); /* 背景顏色 */
+  color: white;
+  cursor: pointer;
+  border-radius: 50%; /* 圓形的箭頭 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* 確保箭頭在圖片之上 */
+}
 
-/* attraction-title 的 CSS */
+/* 設定左箭頭 */
+.arrow-left {
+  left: 10px; /* 左側距離 */
+  background-image: url('/static/image/left-row.png'); /* 左箭頭圖片 */
+  background-size: contain; /* 保證圖片完整顯示 */
+  background-repeat: no-repeat; /* 防止圖片重複 */
+  background-position: center; /* 圖片居中 */
+}
+
+/* 設定右箭頭 */
+.arrow-right {
+  right: 10px; /* 右側距離 */
+  background-image: url('/static/image/right-row.png'); /* 右箭頭圖片 */
+  background-size: contain; /* 保證圖片完整顯示 */
+  background-repeat: no-repeat; /* 防止圖片重複 */
+  background-position: center; /* 圖片居中 */
+}
+
+/* 點點導航 */
+.image-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.image-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(204, 204, 204, 1);
+  cursor: pointer;
+}
+
+/* 當前圖片的點 */
+.image-dots .dot.active {
+  background-color: rgba(68, 136, 153, 1);
+}
+
 .attraction-title {
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 24px;
-    letter-spacing: 0;
-    vertical-align: middle;
-    color: rgba(102, 102, 102, 1);
-    padding-bottom: 20px;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 24px;
+  letter-spacing: 0;
+  vertical-align: middle;
+  color: rgba(102, 102, 102, 1);
+  padding-bottom: 20px;
+}
+
+.attraction-category-mrt {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 13.3px;
+  letter-spacing: 0;
+  vertical-align: middle;
+  color: rgba(102, 102, 102, 1);
+  padding-bottom: 20px;
+}
+
+
+
+
+
+/* 訂購區塊 */
+.order {
+  background-color: rgba(232, 232, 232, 1);
+  max-width: 600px;
+  padding: 20px 20px;
+
+}
+
+.order-body {
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 700;
+  padding: 10px 0;
+}
+
+.order-med {
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 400;
+  padding: 10px 0;
+}
+
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 700;
+  color: rgba(102, 102, 102, 1);
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+input[type="date"] {
+  width: 193px;
+  height: 35px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.options-container > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.option label {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  background: white;
+  border: 2px solid rgba(68, 136, 153, 1);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+input[type="radio"]:checked {
+  background: rgba(68, 136, 153, 1);
+  border-color: rgba(68, 136, 153, 1);
+}
+
+.fee-label {
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+}
+
+.currency {
+  font-weight: 400;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+}
+
+.order-button {
+  padding: 10px 20px;
+  background-color: rgba(68, 136, 153, 1);
+  color: white;
+  display: flex;
+  align-items: center;  /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 19px;
+  margin-top: 20px;
+  width: 154px;
+}
+
+.attraction-description-container {
+  max-width: 1200px;
+  width: 90%; 
+  box-sizing: border-box;
+  margin: 0 auto; /* 水平置中 */
+  padding-top: 20px;
+}
+
+.attraction-address-title, .attraction-transport-title {
+  font-family: 'Noto Sans TC';
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 13.3px;
+  letter-spacing: 0;
+  color: rgba(102, 102, 102, 1);
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+
+
+.attraction-description {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0%;
+  color: rgba(102, 102, 102, 1);
+}
+
+.attraction-address {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: rgba(102, 102, 102, 1);
+}
+
+.attraction-transport {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0%;
+  color: rgba(102, 102, 102, 1);
+}
+
+footer {
+  background: rgba(117, 117, 117, 1);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;  /* 根據需要調整內邊距 */
+  margin-top: 15px;  /* 新增間距，讓 footer 與上方內容有 15px 的間距 */
+}
+
+.footer-text {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 1);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
   }
-  
-  /* attraction-category-mrt 的 CSS */
-  .attraction-category-mrt {
-    font-family: 'Noto Sans TC', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 13.3px;
-    letter-spacing: 0;
-    vertical-align: middle;
-    color: rgba(102, 102, 102, 1);
-    padding-bottom: 20px;
+
+  .attraction-container {
+    flex-direction: column;
   }
-  
 
+  .attraction-image-container {
+    max-width: 100%;
+    height: 300px;
 
+  }
 
-  
-  /* 訂購區塊 */
+  .attraction-info {
+    max-width: 100%;
+    margin-left: 0;
+    padding-top: 20px;
+  }
+
   .order {
-    background-color: rgba(232, 232, 232, 1);
-    width: 600px;
-    padding: 20px;
-    box-sizing: border-box;
+    max-width: 100%;
   }
-  
-  .order-body {
+
+  .order-button {
+    width: 100%;
+  }
+
+  .attraction-description-container {
+    padding-top: 30px;
+  }
+
+  .order-button {
+    width: 30%;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .order-button {
+    width: 30%;
     font-size: 16px;
-    color: rgba(102, 102, 102, 1);
-    font-weight: 700;
-    padding: 10px 0;
   }
-  
-  .order-med {
-    font-size: 16px;
-    color: rgba(102, 102, 102, 1);
-    font-weight: 400;
-    padding: 10px 0;
+
+
+}
+
+
+@media (max-width: 450px) {
+  .order-button {
+    width: 30%;
+    font-size: 14px;
   }
-  
+
+
+}
+
+@media (max-width: 370px) {
+
+
+  .nav-title {
+    font-size: 20px;
+  }
+
+  .order-button {
+    width: 40%;
+  }
+  .attraction-container {
+    width: 95%;
+  }
+
   .date-picker-container {
     display: flex;
     align-items: center;
+    gap: 10px;  /* 控制間距 */
     margin-bottom: 15px;
   }
   
-  label {
+  .date-picker-container label {
     font-weight: 700;
     color: rgba(102, 102, 102, 1);
     font-size: 16px;
-    margin-right: 10px;
+    white-space: nowrap;  /* 防止換行 */
   }
   
-  input[type="date"] {
+  .date-picker-container input[type="date"] {
     width: 193px;
     height: 35px;
     padding: 5px;
@@ -209,65 +453,52 @@ body {
     font-size: 14px;
   }
   
-  .options-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .options-container > div:first-child {
+  .date-picker-container {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;  /* 控制間距 */
+    margin-bottom: 15px;
+    white-space: nowrap;  /* 防止整個容器換行 */
   }
   
+  .date-picker-container label {
+    font-weight: 700;
+    color: rgba(102, 102, 102, 1);
+    font-size: 16px;
+    white-space: nowrap;  /* 防止 label 換行 */
+  }
+  
+  .date-picker-container input[type="date"] {
+    width: 193px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
   .option {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 5px;  /* 減少間距 */
+    white-space: nowrap;  /* 防止換行 */
+    width: 100%;  /* 確保選項容器占滿整個寬度 */
+    box-sizing: border-box;  /* 包括 padding 和 border 計算寬度 */
   }
-  
+
   .option label {
-    font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;  /* 減少字型大小 */
+    white-space: nowrap;  /* 防止文字換行 */
+    overflow: hidden;
+    text-overflow: ellipsis;  /* 避免文字溢出顯示省略號 */
   }
-  
+
   input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    appearance: none;
-    background: white;
-    border: 2px solid rgba(68, 136, 153, 1);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s ease;
+    width: 16px;  /* 減小圓點大小 */
+    height: 16px;  /* 減小圓點大小 */
   }
-  
-  input[type="radio"]:checked {
-    background: rgba(68, 136, 153, 1);
-    border-color: rgba(68, 136, 153, 1);
-  }
-  
-  .fee-label {
-    font-weight: 700;
-    font-size: 16px;
-    color: rgba(102, 102, 102, 1);
-  }
-  
-  .currency {
-    font-weight: 400;
-    font-size: 16px;
-    color: rgba(102, 102, 102, 1);
-  }
-  
+
   .order-button {
-    padding: 10px 20px;
-    background-color: rgba(68, 136, 153, 1);
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 19px;
-    margin-top: 20px;
+    width: 40%;  /* 按鈕在小螢幕上占滿寬度 */
+    font-size: 14px;  /* 調整字型大小 */
   }
-  
+}
