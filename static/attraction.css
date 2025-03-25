@@ -148,7 +148,8 @@ nav div {
 
 /* 當前圖片的點 */
 .image-dots .dot.active {
-  background-color: rgba(68, 136, 153, 1);
+  background-color: rgba(0, 0, 0, 1);
+  border: 1px solid white;
 }
 
 .attraction-title {
