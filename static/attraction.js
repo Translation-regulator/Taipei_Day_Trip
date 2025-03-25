@@ -83,14 +83,20 @@ function renderImageSlideshow() {
   imageContainer.style.backgroundImage = `url(${images[currentImageIndex]})`;
 
   // 建立箭頭 (插入到圖片容器內)
-  imageNav.innerHTML = `
-    <span class="arrow-left" title="上一張"></span>
-    <span class="arrow-right" title="下一張"></span>
-  `;
+  const arrowLeft = document.createElement('span');
+  arrowLeft.classList.add('arrow-left');
+  arrowLeft.title = "上一張";
+  
+  const arrowRight = document.createElement('span');
+  arrowRight.classList.add('arrow-right');
+  arrowRight.title = "下一張";
+
+  imageNav.appendChild(arrowLeft);
+  imageNav.appendChild(arrowRight);
   imageContainer.appendChild(imageNav);
 
   // 建立點點，並用 title 提示目前第幾張
-  imageDots.innerHTML = '';
+  imageDots.innerHTML = ''; // 清空先前的點點
   images.forEach((img, index) => {
     const dot = document.createElement('span');
     dot.classList.add('dot');
@@ -102,10 +108,9 @@ function renderImageSlideshow() {
   imageContainer.appendChild(imageDots);
 
   // 綁定箭頭事件
-  imageNav.querySelector('.arrow-left').addEventListener('click', () => changeImage(currentImageIndex - 1));
-  imageNav.querySelector('.arrow-right').addEventListener('click', () => changeImage(currentImageIndex + 1));
+  arrowLeft.addEventListener('click', () => changeImage(currentImageIndex - 1));
+  arrowRight.addEventListener('click', () => changeImage(currentImageIndex + 1));
 }
-
 
 function changeImage(index) {
   if (index < 0) {
