@@ -366,6 +366,11 @@ footer {
 
   .attraction-container {
     flex-direction: column;
+    width: 100%;
+  }
+
+  .attraction-outer-container {
+    margin-top: 0px ;
   }
 
   .attraction-image-container {
@@ -375,9 +380,9 @@ footer {
   }
 
   .attraction-info {
-    max-width: 100%;
-    margin-left: 0;
+    width: 90%;
     padding-top: 20px;
+    margin: 0 auto;
   }
 
   .order {
@@ -404,9 +409,12 @@ footer {
     font-size: 16px;
   }
 
-
 }
 
+.attraction-info {
+  width: 90% !important;
+
+}
 
 @media (max-width: 450px) {
   .order-button {
@@ -427,9 +435,10 @@ footer {
   .order-button {
     width: 40%;
   }
-  .attraction-container {
-    width: 95%;
-  }
+
+
+
+
 
   .date-picker-container {
     display: flex;
