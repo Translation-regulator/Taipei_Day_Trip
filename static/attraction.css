@@ -293,6 +293,7 @@ input[type="radio"]:checked {
   box-sizing: border-box;
   margin: 0 auto; /* 水平置中 */
   padding-top: 20px;
+  text-align:justify
 }
 
 .attraction-address-title, .attraction-transport-title {
@@ -380,6 +381,7 @@ footer {
   }
 
   .attraction-info {
+    max-width: none;
     width: 90%;
     padding-top: 20px;
     margin: 0 auto;
