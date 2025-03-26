@@ -74,6 +74,7 @@ nav div {
   position: relative;
   overflow: hidden;
   display: flex;
+  margin-right: 20px;
 }
 
 /* 確保圖片可縮放 */
