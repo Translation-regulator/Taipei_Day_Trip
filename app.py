@@ -101,9 +101,7 @@ def get_attractions(page: int = Query(0), keyword: str = Query(None)):
             
             # 轉換圖片欄位為 JSON 格式
             for record in records:
-                images = json.loads(record['images'])
-                record['image'] = images[0] if images else None  # 只取第一張圖
-                del record['images']  # 刪除原本的 images 欄位
+                record['images'] = json.loads(record['images'])  # 轉換為 JSON 格式
 
         
         # 回傳資料，包含是否有下一頁
@@ -139,9 +137,7 @@ def get_attraction_detail(attractionId: int):
                     "error": True,
                     "message": "對應的景點編號不存在"
                 })
-            attraction['images'] = json.loads(attraction['images'])
-            attraction['image'] = attraction['images'][0] if attraction['images'] else None  # 只取第一張圖
-            del attraction['images']  # 刪除原本的 images 欄位
+            attraction['images'] = json.loads(attraction['images'])  # 轉換為 JSON 格式
 
         return {"data": attraction}
     except Exception as e:
