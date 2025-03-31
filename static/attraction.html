@@ -64,6 +64,52 @@
       <div class="attraction-transport-title">交通方式：</div>
       <div class="attraction-transport"></div>
     </div>
+
+    <div class="dialog-overlay" id="dialog-overlay">
+      <div class="dialog-box">
+        <div class="dialog-box-decorator-bar"></div>
+        
+    
+        <div class="dialog-content" id="dialog-signin">
+          <div class="dialog-inner-content">
+            <h2>登入會員帳號</h2>
+            <div class="dialog-close-btn">
+              <img src="/static/image/close.png" class="dialog-close-btn" id="dialog-close-btn"/>
+            </div>
+            <div class="input-group">
+              <input type="email" placeholder="輸入電子信箱" />
+            </div>
+            <div class="input-group">
+              <input type="password" placeholder="輸入密碼" />
+            </div>
+            <button class="dialog-btn">登入帳號</button>
+            <div class="dialog-switch">
+              還沒有帳戶？<span id="to-signup">點此註冊</span>
+            </div>   
+          </div>                                                          
+        </div> 
+    
+        <div class="dialog-content" id="dialog-signup" style="display: none;">
+          <div class="dialog-inner-content">
+            <h2>註冊會員帳號</h2>
+            <img src="/static/image/close.png" class="dialog-close-btn" id="dialog-close-btn"/>
+            <div class="input-group">
+              <input type="text" placeholder="輸入姓名" />
+            </div>
+            <div class="input-group">
+              <input type="email" placeholder="輸入電子郵件" />
+            </div>
+            <div class="input-group">
+              <input type="password" placeholder="輸入密碼" />
+            </div>
+            <button class="dialog-btn">註冊新帳戶</button>
+            <p class="dialog-switch">
+              已經有帳戶了？<span id="to-signin">點此登入</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <footer>
       <div class="footer-text">COPYRIGHT © 2021 台北一日遊</div>

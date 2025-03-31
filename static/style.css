@@ -63,7 +63,7 @@ nav div{
 
 .hero {
     width: 100%;
-    height: 480px;
+    height: 400px;
     background-image: url("/static/image/welcome.png"); /* 設置背景圖片 */
     background-size: cover; /* 覆蓋整個區域 */
     background-position: center; /* 置中對齊 */
@@ -260,6 +260,136 @@ footer {
     align-items: center;
 }
 
+/* 最外層半透明遮罩 */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Dialog 容器 */
+.dialog-box {
+    background: rgba(255, 255, 255, 1);
+    width: 340px;
+    border-radius: 5px;
+    position: absolute;
+    height: auto; /* 調整高度 */
+    box-shadow: 0px 4px 60px 0px rgba(170, 170, 170, 1);
+    top: 80px; /* 讓表單固定距離頁面頂端 80px */
+
+
+}
+
+.dialog-box-decorator-bar {
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+    border-top-left-radius: 5px;  
+    border-top-right-radius: 5px; 
+}
+
+.dialog-content {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-content .input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-inner-content {
+    position: relative; /* 讓內部元素可以用 absolute 定位 */
+    text-align: center;
+    width: 100%;
+}
+
+
+.dialog-close-btn {
+    position: absolute;
+    top: 0px;  /* 向上移動 */
+    right:0px; /* 向右移動 */
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    width: 16px;
+    height: 16px;
+}
+
+
+/* 標題樣式 */
+.dialog-content h2 {
+    font-weight: 700;
+    font-size: 24px;
+    color: rgba(102, 102, 102, 1);
+    margin-bottom: 15px; 
+    margin-top:0px;
+}
+
+/* 輸入框樣式 */
+.input-group {
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    width: 310px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 13.3px;
+    border: 1px solid rgba(204, 204, 204, 1);
+    border-radius: 5px;
+}
+
+/* 按鈕樣式 */
+.dialog-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(68, 136, 153, 1);
+    color: rgba(255, 255, 255, 1);
+    border: none;
+    border-radius: 5px;
+    font-size: 19px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+/* 切換註冊/登入文字樣式 */
+.dialog-switch {
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 16px;
+    line-height: 13.3px;
+    font-weight: 500;
+    color: rgba(102, 102, 102, 1);
+}
+
+.dialog-switch span {
+    color: rgba(102, 102, 102, 1);
+    cursor: pointer;
+}
+
+/* 顯示彈窗時的 active 類 */
+.dialog-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
 
 
 

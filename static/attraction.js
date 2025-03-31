@@ -130,3 +130,48 @@ function updateDotStyle() {
     dot.classList.toggle('active', index === currentImageIndex);
   });
 }
+
+    // 1. 取得按鈕與 Dialog 元素
+    const loginButton = document.querySelector(".nav-login"); // 右上角「登入/註冊」按鈕
+    const dialogOverlay = document.getElementById("dialog-overlay");
+    const dialogCloseBtns = document.querySelectorAll(".dialog-close-btn");
+
+    // 取得表單切換的按鈕
+    const dialogSignin = document.getElementById("dialog-signin");
+    const dialogSignup = document.getElementById("dialog-signup");
+    const toSignupBtn = document.getElementById("to-signup");
+    const toSigninBtn = document.getElementById("to-signin");
+
+    // 2. 開啟彈窗
+    loginButton.addEventListener("click", () => {
+        // 每次打開前，預設顯示「登入表單」，隱藏「註冊表單」
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+        // 加上 active 類
+        dialogOverlay.classList.add("active");
+    });
+
+    // 3. 關閉彈窗
+    dialogCloseBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            dialogOverlay.classList.remove("active");
+        });
+    });
+
+    // (可選) 點擊遮罩區域也關閉
+    dialogOverlay.addEventListener("click", (event) => {
+        // 如果點擊到的是 overlay 本身而不是裡面的 dialog-box，才關閉
+        if (event.target === dialogOverlay) {
+        dialogOverlay.classList.remove("active");
+        }
+    });
+
+    // 4. 切換表單
+    toSignupBtn.addEventListener("click", () => {
+        dialogSignin.style.display = "none";
+        dialogSignup.style.display = "block";
+    });
+    toSigninBtn.addEventListener("click", () => {
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+    });
