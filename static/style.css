@@ -486,7 +486,14 @@ footer {
         grid-template-columns: 1fr;
     }
 
+    .dialog-box {
+        width: calc(100% - 20px); /* 左右各空出 10px */
+        max-width: 340px; /* 避免在較大手機上過寬 */
+    }
 
+    .input-group input {
+        width: 100%;
+    }
 }
 
 .arrow {
