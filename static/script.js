@@ -14,42 +14,109 @@ document.addEventListener("DOMContentLoaded", () => {
     let lastKnownScrollPosition = 0;
     let ticking = false;
 
-    // 1. 取得按鈕與 Dialog 元素
-    const loginButton = document.querySelector(".nav-login"); // 右上角「登入/註冊」按鈕
+    // 點擊「台北一日遊」返回首頁
+    function homepage(className) {
+        const button = document.querySelector(`.${className}`);
+        if (button) {
+        button.addEventListener("click", () => {
+            window.location.href = "/";
+        });
+        } else {
+        console.error(`Element with class "${className}" not found.`);
+        }
+    }
+    homepage("nav-title");
+    
+    // --------------------- 取得目前使用者資訊 ---------------------
+    async function getUserInfo(token) {
+        try {
+            const response = await fetch('/api/user', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            const data = await response.json();
+            console.log('使用者資訊：', data);
+            // 根據需求在頁面上顯示使用者名稱或其他資訊
+        } catch (error) {
+            console.error('取得使用者資訊失敗：', error);
+        }
+    }
+
+    // --------------------- 使用者註冊 ---------------------
+    async function userSignup(name, email, password) {
+        try {
+            const response = await fetch('/api/user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+            const data = await response.json();
+            if (data.error) {
+                console.error('註冊錯誤：', data.message);
+            } else {
+                console.log('註冊成功！');
+            }
+        } catch (error) {
+            console.error('註冊失敗：', error);
+        }
+    }
+
+    // --------------------- 使用者登入 ---------------------
+    async function userSignin(email, password) {
+        try {
+            const response = await fetch('/api/user/auth', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (data.error) {
+                console.error('登入錯誤：', data.message);
+            } else {
+                console.log('登入成功，Token：', data.token);
+                localStorage.setItem('jwtToken', data.token);
+            }
+        } catch (error) {
+            console.error('登入失敗：', error);
+        }
+    }
+
+    
+    // --------------------- 取得表單與按鈕 ---------------------
+    const loginButton = document.querySelector(".nav-login");
     const dialogOverlay = document.getElementById("dialog-overlay");
     const dialogCloseBtns = document.querySelectorAll(".dialog-close-btn");
 
-    // 取得表單切換的按鈕
     const dialogSignin = document.getElementById("dialog-signin");
     const dialogSignup = document.getElementById("dialog-signup");
+
     const toSignupBtn = document.getElementById("to-signup");
     const toSigninBtn = document.getElementById("to-signin");
 
-    // 2. 開啟彈窗
+    const signinInputs = dialogSignin.querySelectorAll(".input-group input");
+    const signinBtn = dialogSignin.querySelector(".dialog-btn");
+
+    const signupInputs = dialogSignup.querySelectorAll(".input-group input");
+    const signupBtn = dialogSignup.querySelector(".dialog-btn");
+
+    // --------------------- 開啟彈窗 ---------------------
     loginButton.addEventListener("click", () => {
-        // 每次打開前，預設顯示「登入表單」，隱藏「註冊表單」
         dialogSignin.style.display = "block";
         dialogSignup.style.display = "none";
-        // 加上 active 類
         dialogOverlay.classList.add("active");
     });
 
-    // 3. 關閉彈窗
     dialogCloseBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             dialogOverlay.classList.remove("active");
         });
     });
 
-    // (可選) 點擊遮罩區域也關閉
     dialogOverlay.addEventListener("click", (event) => {
-        // 如果點擊到的是 overlay 本身而不是裡面的 dialog-box，才關閉
         if (event.target === dialogOverlay) {
-        dialogOverlay.classList.remove("active");
+            dialogOverlay.classList.remove("active");
         }
     });
 
-    // 4. 切換表單
     toSignupBtn.addEventListener("click", () => {
         dialogSignin.style.display = "none";
         dialogSignup.style.display = "block";
@@ -59,27 +126,37 @@ document.addEventListener("DOMContentLoaded", () => {
         dialogSignup.style.display = "none";
     });
 
-    // --------------------- 點擊 "台北一日遊" 標題可以返回首頁 == 重新整理功能 ---------------------
-    function homepage(className) {
-        const button = document.querySelector(`.${className}`); // 選取 class 為 nav-title 的元素
-        if (button) {
-            button.addEventListener("click", () => {
-                window.location.href = "/";
-            });
-        } else {
-            console.error(`Element with class "${className}" not found.`);
-        }
+    // --------------------- 註冊與登入功能 ---------------------
+    if (signinBtn) {
+        signinBtn.addEventListener("click", () => {
+            const email = signinInputs[0].value.trim();
+            const password = signinInputs[1].value.trim();
+            if (!email || !password) {
+                console.error("請填寫完整的登入資訊");
+                return;
+            }
+            userSignin(email, password);
+        });
     }
-    homepage("nav-title");
-    
+
+    if (signupBtn) {
+        signupBtn.addEventListener("click", () => {
+            const name = signupInputs[0].value.trim();
+            const email = signupInputs[1].value.trim();
+            const password = signupInputs[2].value.trim();
+            if (!name || !email || !password) {
+                console.error("請填寫完整的註冊資訊");
+                return;
+            }
+            userSignup(name, email, password);
+        });
+    }
 
     // --------------------- 左右箭頭與拖曳功能 ---------------------
     function addContinuousScroll(button, direction) {
         let intervalId;
         button.addEventListener("mousedown", () => {
-            // 立即滾動一次
             list.scrollLeft += direction === "left" ? -scrollAmount : scrollAmount;
-            // 開始持續滾動
             intervalId = setInterval(() => {
                 list.scrollLeft += direction === "left" ? -10 : 10;
             }, 10);
@@ -116,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function searchAttractions(keyword, isMRTSearch = false) {
-        nextPage = 0;  
-        gridContainer.innerHTML = '';  
+        nextPage = 0;
+        gridContainer.innerHTML = '';
         loadAttractions(keyword, isMRTSearch);
     }
 
@@ -136,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (isMRTSearch && attraction.mrt !== keyword) return;
     
                 const card = createAttractionCard(attraction);
-                gridContainer.appendChild(card);  // 確保卡片被正確加入
+                gridContainer.appendChild(card); 
             });
     
             nextPage = data.nextPage;
@@ -147,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
-
     function createAttractionCard(attraction) {
         const card = document.createElement("div");
         card.classList.add("grid-item");
@@ -155,15 +231,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const imgContainer = document.createElement("div");
         imgContainer.classList.add("img-container");
     
-        // 創建 <a> 標籤 --> 只包住圖片
         const link = document.createElement("a");
         link.href = `/attraction/${attraction.id}`;
     
         const img = document.createElement("img");
-        img.src = attraction.images[0];  // 顯示第一張圖片
+        img.src = attraction.images[0];  
         img.alt = attraction.name;
     
-        // 把圖片放進 <a>，確保只有圖片是超連結
         link.appendChild(img);
         imgContainer.appendChild(link);
     
@@ -191,9 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
         return card;
     }
-    
-    
-    
 
     // --------------------- 無限滾動 ---------------------
     function handleScroll() {
@@ -226,7 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadMRTStations();
     loadAttractions('');
 
-    // 檢查頁面是否自動滾動到底部
     const bottom = document.documentElement.scrollHeight - window.innerHeight;
     if (window.scrollY >= bottom - 200 && nextPage !== null && !isLoading) {
         loadAttractions('');
