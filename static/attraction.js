@@ -157,8 +157,6 @@ async function getUserInfo(token) {
     const response = await fetch('/api/user/auth', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    const data = await response.json();
-    console.log('使用者資訊：', data);
     // 可依需求在頁面上顯示使用者名稱或其他資訊
   } catch (error) {
     console.error('取得使用者資訊失敗：', error);
