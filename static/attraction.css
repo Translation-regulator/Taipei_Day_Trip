@@ -1,35 +1,35 @@
 /* 頁面基本樣式 */
 body {
-font-family: 'Noto Sans TC';
-margin: 0;
-padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
+  font-family: 'Noto Sans TC';
+  margin: 0;
+  padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
 }
 
 /* 主要容器設定 */
 .container {
-display: flex;
-justify-content: center;
-align-items: center;
-background-color: #fff;
-border-bottom: 1px solid rgba(232, 232, 232, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  border-bottom: 1px solid rgba(232, 232, 232, 1);
 }
 
 /* 導航條設定 */
 nav {
-display: flex;
-align-items: center;
-max-width: 1200px;
-width: 90%;
-justify-content: space-between;
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  width: 90%;
+  justify-content: space-between;
 }
 
 .nav-title {
-font-size: 30px;
-color: #448899;
-font-weight: 700;
-padding: 10px 0;
-text-align: center;
-cursor: pointer;
+  font-size: 30px;
+  color: #448899;
+  font-weight: 700;
+  padding: 10px 0;
+  text-align: center;
+  cursor: pointer;
 }
 
 nav div {
@@ -55,21 +55,19 @@ nav div {
   margin-top: 50px;
 }
 
-/* attraction-container 寬度設定 */
 .attraction-container {
   max-width: 1200px;
-  width:90%;
-  margin: 0 auto; /* 使其水平居中 */
+  width: 90%;
+  margin: 0 auto;
   display: flex;
-  justify-content: space-between; /* 讓圖片區和其他內容有適當的間距 */
+  justify-content: space-between;
   border-bottom: 1px solid rgba(232, 232, 232, 1);
   padding-bottom: 40px;
 }
 
-/* 圖片區域設定 */
 .attraction-image-container {
   width: 100%;
-  max-width: 540px; /* 限制最大寬度 */
+  max-width: 540px;
   height: auto;
   position: relative;
   overflow: hidden;
@@ -77,55 +75,53 @@ nav div {
   margin-right: 20px;
 }
 
-/* 確保圖片可縮放 */
 .attraction-image {
   width: 100%;
   height: 100%;
-  background-size: cover; /* 確保背景圖片完全覆蓋容器 */
+  background-size: cover;
   position: absolute;
   top: 0;
   left: 0;
 }
 
+/* 合併 attraction-info 相關設定 */
 .attraction-info {
-  width: 100%;  /* 預設占滿可用空間 */
-  max-width: 600px; /* 最大寬度 600px */
-  margin-left: auto; /* 靠右對齊 */
+  width: 90% !important;
+  max-width: 600px;
+  margin-left: auto;
 }
 
-/* 設定箭頭的基本樣式 */
+/* 箭頭樣式 */
 .arrow-left, .arrow-right {
-  position: absolute; /* 使箭頭定位在圖片的左右 */
+  position: absolute;
   top: 50%;
-  transform: translateY(-50%); /* 使箭頭垂直置中 */
+  transform: translateY(-50%);
   width: 40px;
   height: 40px;
-  background-color: rgba(0, 0, 0, 0.5); /* 背景顏色 */
+  background-color: rgba(0, 0, 0, 0.5);
   color: white;
   cursor: pointer;
-  border-radius: 50%; /* 圓形的箭頭 */
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10; /* 確保箭頭在圖片之上 */
+  z-index: 10;
 }
 
-/* 設定左箭頭 */
 .arrow-left {
-  left: 10px; /* 左側距離 */
-  background-image: url('/static/image/left-row.png'); /* 左箭頭圖片 */
-  background-size: contain; /* 保證圖片完整顯示 */
-  background-repeat: no-repeat; /* 防止圖片重複 */
-  background-position: center; /* 圖片居中 */
+  left: 10px;
+  background-image: url('/static/image/left-row.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-/* 設定右箭頭 */
 .arrow-right {
-  right: 10px; /* 右側距離 */
-  background-image: url('/static/image/right-row.png'); /* 右箭頭圖片 */
-  background-size: contain; /* 保證圖片完整顯示 */
-  background-repeat: no-repeat; /* 防止圖片重複 */
-  background-position: center; /* 圖片居中 */
+  right: 10px;
+  background-image: url('/static/image/right-row.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* 點點導航 */
@@ -147,7 +143,6 @@ nav div {
   cursor: pointer;
 }
 
-/* 當前圖片的點 */
 .image-dots .dot.active {
   background-color: rgba(0, 0, 0, 1);
   border: 1px solid white;
@@ -158,8 +153,6 @@ nav div {
   font-weight: 700;
   font-size: 24px;
   line-height: 24px;
-  letter-spacing: 0;
-  vertical-align: middle;
   color: rgba(102, 102, 102, 1);
   padding-bottom: 20px;
 }
@@ -169,22 +162,15 @@ nav div {
   font-weight: 400;
   font-size: 16px;
   line-height: 13.3px;
-  letter-spacing: 0;
-  vertical-align: middle;
   color: rgba(102, 102, 102, 1);
   padding-bottom: 20px;
 }
-
-
-
-
 
 /* 訂購區塊 */
 .order {
   background-color: rgba(232, 232, 232, 1);
   max-width: 600px;
-  padding: 20px 20px;
-
+  padding: 20px;
 }
 
 .order-body {
@@ -279,8 +265,8 @@ input[type="radio"]:checked {
   background-color: rgba(68, 136, 153, 1);
   color: white;
   display: flex;
-  align-items: center;  /* 垂直置中 */
-  justify-content: center; /* 水平置中 */
+  align-items: center;
+  justify-content: center;
   border-radius: 5px;
   cursor: pointer;
   font-size: 19px;
@@ -290,52 +276,34 @@ input[type="radio"]:checked {
 
 .attraction-description-container {
   max-width: 1200px;
-  width: 90%; 
+  width: 90%;
   box-sizing: border-box;
-  margin: 0 auto; /* 水平置中 */
+  margin: 0 auto;
   padding-top: 20px;
-  text-align:justify
+  text-align: justify;
 }
 
-.attraction-address-title, .attraction-transport-title {
+.attraction-address-title,
+.attraction-transport-title {
   font-family: 'Noto Sans TC';
   font-weight: 700;
   font-size: 16px;
-  line-height: 13.3px;
-  letter-spacing: 0;
   color: rgba(102, 102, 102, 1);
   padding-top: 30px;
   padding-bottom: 10px;
 }
 
-
-.attraction-description {
-  font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0%;
-  color: rgba(102, 102, 102, 1);
-}
-
-.attraction-address {
-  font-family: 'Noto Sans TC', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 100%;
-  letter-spacing: 0%;
-  color: rgba(102, 102, 102, 1);
-}
-
+.attraction-description,
+.attraction-address,
 .attraction-transport {
   font-family: 'Noto Sans TC', sans-serif;
   font-weight: 400;
   font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0%;
   color: rgba(102, 102, 102, 1);
+  line-height: 1.5;
 }
 
+/* footer */
 footer {
   background: rgba(117, 117, 117, 1);
   position: fixed;
@@ -347,8 +315,8 @@ footer {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px 0;  /* 根據需要調整內邊距 */
-  margin-top: 15px;  /* 新增間距，讓 footer 與上方內容有 15px 的間距 */
+  padding: 20px 0;
+  margin-top: 15px;
 }
 
 .footer-text {
@@ -360,63 +328,168 @@ footer {
   align-items: center;
 }
 
+/* 最外層半透明遮罩 */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 
+/* Dialog 容器 */
+.dialog-box {
+  background: rgba(255, 255, 255, 1);
+  width: 340px;
+  border-radius: 5px;
+  position: absolute;
+  height: auto; /* 調整高度 */
+  box-shadow: 0px 4px 60px 0px rgba(170, 170, 170, 1);
+  top:80px;
+
+}
+
+.dialog-box-decorator-bar {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+  border-top-left-radius: 5px;  
+  border-top-right-radius: 5px; 
+}
+
+.dialog-content {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-content .input-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-inner-content {
+  position: relative; /* 讓內部元素可以用 absolute 定位 */
+  text-align: center;
+  width: 100%;
+}
+
+
+.dialog-close-btn {
+  position: absolute;
+  top: 0px;  /* 向上移動 */
+  right:0px; /* 向右移動 */
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  width: 16px;
+  height: 16px;
+}
+
+
+/* 標題樣式 */
+.dialog-content h2 {
+  font-weight: 700;
+  font-size: 24px;
+  color: rgba(102, 102, 102, 1);
+  margin-bottom: 15px; 
+  margin-top:0px;
+}
+
+/* 輸入框樣式 */
+.input-group {
+  margin-bottom: 10px;
+}
+
+.input-group input {
+  width: 310px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 13.3px;
+  border: 1px solid rgba(204, 204, 204, 1);
+  border-radius: 5px;
+}
+
+/* 按鈕樣式 */
+.dialog-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(68, 136, 153, 1);
+  color: rgba(255, 255, 255, 1);
+  border: none;
+  border-radius: 5px;
+  font-size: 19px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+/* 切換註冊/登入文字樣式 */
+.dialog-switch {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  line-height: 13.3px;
+  font-weight: 500;
+  color: rgba(102, 102, 102, 1);
+}
+
+.dialog-switch span {
+  color: rgba(102, 102, 102, 1);
+  cursor: pointer;
+}
+
+/* 顯示彈窗時的 active 類 */
+.dialog-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 響應式設定 */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
   }
-
   .attraction-container {
     flex-direction: column;
     width: 100%;
   }
-
   .attraction-outer-container {
-    margin-top: 0px ;
+    margin-top: 0;
   }
-
   .attraction-image-container {
     max-width: 100%;
     height: 300px;
-
   }
-
   .attraction-info {
     max-width: none;
     width: 90%;
     padding-top: 20px;
     margin: 0 auto;
   }
-
   .order {
     max-width: 100%;
   }
-
-  .order-button {
-    width: 100%;
-  }
-
-  .attraction-description-container {
-    padding-top: 30px;
-  }
-
-  .order-button {
-    width: 30%;
-  }
-
-}
-
-@media (max-width: 768px) {
   .order-button {
     width: 30%;
     font-size: 16px;
   }
-
-}
-
-.attraction-info {
-  width: 90% !important;
-
+  .attraction-description-container {
+    padding-top: 30px;
+  }
 }
 
 @media (max-width: 450px) {
@@ -424,63 +497,29 @@ footer {
     width: 30%;
     font-size: 14px;
   }
-
-
 }
 
 @media (max-width: 370px) {
-
-
   .nav-title {
     font-size: 20px;
   }
-
   .order-button {
     width: 40%;
-  }
-
-
-
-
-
-  .date-picker-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;  /* 控制間距 */
-    margin-bottom: 15px;
-  }
-  
-  .date-picker-container label {
-    font-weight: 700;
-    color: rgba(102, 102, 102, 1);
-    font-size: 16px;
-    white-space: nowrap;  /* 防止換行 */
-  }
-  
-  .date-picker-container input[type="date"] {
-    width: 193px;
-    height: 35px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
     font-size: 14px;
   }
-  
   .date-picker-container {
     display: flex;
     align-items: center;
-    gap: 10px;  /* 控制間距 */
+    gap: 10px;
     margin-bottom: 15px;
-    white-space: nowrap;  /* 防止整個容器換行 */
+    white-space: nowrap;
   }
-  
   .date-picker-container label {
     font-weight: 700;
     color: rgba(102, 102, 102, 1);
     font-size: 16px;
-    white-space: nowrap;  /* 防止 label 換行 */
+    white-space: nowrap;
   }
-  
   .date-picker-container input[type="date"] {
     width: 193px;
     height: 35px;
@@ -492,26 +531,28 @@ footer {
   .option {
     display: flex;
     align-items: center;
-    gap: 5px;  /* 減少間距 */
-    white-space: nowrap;  /* 防止換行 */
-    width: 100%;  /* 確保選項容器占滿整個寬度 */
-    box-sizing: border-box;  /* 包括 padding 和 border 計算寬度 */
+    gap: 5px;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
   }
-
   .option label {
-    font-size: 14px;  /* 減少字型大小 */
-    white-space: nowrap;  /* 防止文字換行 */
+    font-size: 14px;
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;  /* 避免文字溢出顯示省略號 */
+    text-overflow: ellipsis;
   }
-
   input[type="radio"] {
-    width: 16px;  /* 減小圓點大小 */
-    height: 16px;  /* 減小圓點大小 */
+    width: 16px;
+    height: 16px;
   }
 
-  .order-button {
-    width: 40%;  /* 按鈕在小螢幕上占滿寬度 */
-    font-size: 14px;  /* 調整字型大小 */
+  .dialog-box {
+    width: calc(100% - 20px); /* 左右各空出 10px */
+    max-width: 340px; /* 避免在較大手機上過寬 */
+  }
+
+  .input-group input {
+    width: 100%;
   }
 }
