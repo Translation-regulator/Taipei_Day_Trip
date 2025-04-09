@@ -53,7 +53,7 @@ main {
 }
 
 .section-container {
-    max-width: 1200px;
+    max-width: 980px;
     width: 90%;
     margin: 0 auto;
 }
@@ -118,6 +118,21 @@ header {
     right: 0;
     cursor: pointer;
 }
+
+.booking-empty {
+    max-width: 980px;
+    font-size: 20px;
+    color: #666;
+    margin: 0 auto;
+    font-family: Noto Sans TC;
+    font-weight: 400;
+    font-size: 16px;
+    vertical-align: middle;
+    color: rgba(102, 102, 102, 1);
+
+
+  }
+  
 
 .booking-hr {
     border: 1px solid rgba(232, 232, 232, 1);

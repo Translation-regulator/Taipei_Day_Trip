@@ -294,18 +294,25 @@ def get_booking(request: Request):
             "error": True,
             "message": "未登入系統，拒絕存取"
         })
+    
     user_id = payload["id"]
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            # 查詢該使用者是否有預定行程（假設一位使用者只有一筆待確認預定）
+            # 取得使用者名稱
+            sql_user = "SELECT name FROM users WHERE id = %s"
+            cursor.execute(sql_user, (user_id,))
+            user = cursor.fetchone()
+            user_name = user["name"] if user else "使用者"
+
+            # 查詢使用者的預定行程
             sql = "SELECT * FROM bookings WHERE user_id = %s LIMIT 1"
             cursor.execute(sql, (user_id,))
             booking = cursor.fetchone()
             if not booking:
                 return {"data": None}
             
-            # 取得對應景點的資料：僅取 id, name, address, images（取第一張作為 image）
+            # 取得景點資訊
             sql_attraction = "SELECT id, name, address, images FROM attractions WHERE id = %s"
             cursor.execute(sql_attraction, (booking["attraction_id"],))
             attraction = cursor.fetchone()
@@ -313,7 +320,9 @@ def get_booking(request: Request):
                 images = json.loads(attraction["images"])
                 image = images[0] if isinstance(images, list) and len(images) > 0 else ""
                 attraction["image"] = image
+
             booking_data = {
+                "userName": user_name, 
                 "attraction": attraction,
                 "date": booking["date"].strftime("%Y-%m-%d") if isinstance(booking["date"], (datetime,)) else str(booking["date"]),
                 "time": booking["time"],
@@ -328,6 +337,7 @@ def get_booking(request: Request):
         })
     finally:
         connection.close()
+
 
 @app.post("/api/booking")
 def create_booking(booking: BookingModel, request: Request):
@@ -370,7 +380,31 @@ def create_booking(booking: BookingModel, request: Request):
     finally:
         connection.close()
 
-# --------------------- End of Booking API ---------------------
+@app.delete("/api/booking")
+def delete_booking(request: Request):
+    """刪除目前的預定行程"""
+    payload = verify_token(request)
+    if not payload:
+        return JSONResponse(status_code=403, content={
+            "error": True,
+            "message": "請依照情境提供對應的錯誤訊息"
+        })
+    user_id = payload["id"]
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            delete_sql = "DELETE FROM bookings WHERE user_id = %s"
+            cursor.execute(delete_sql, (user_id,))
+            connection.commit()
+        return {"ok": True}
+    except Exception as e:
+        logging.error("刪除預定行程發生錯誤：%s", e)
+        return JSONResponse(status_code=500, content={
+            "error": True,
+            "message": "伺服器內部錯誤"
+        })
+    finally:
+        connection.close()
 
 
 if __name__ == "__main__":
