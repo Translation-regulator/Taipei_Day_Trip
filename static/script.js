@@ -29,7 +29,23 @@ document.addEventListener("DOMContentLoaded", () => {
         messageEl.textContent = message;
         messageEl.style.color = type === 'error' ? 'red' : 'green';
       }
-      
+
+    // 取得預定行程按鈕
+    const reserveButton = document.querySelector(".nav-reserve");
+
+    // 針對預定行程按鈕新增點擊事件
+    reserveButton.addEventListener("click", () => {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            // 如果有登入，則直接導向 booking.html
+            window.location.href = "/static/booking.html";
+        } else {
+            // 如果未登入，則開啟登入的 pop-up 視窗
+            dialogSignin.style.display = "block";
+            dialogSignup.style.display = "none";
+            dialogOverlay.classList.add("active");
+        }
+    });
 
     // --------------------- 點擊「台北一日遊」返回首頁 ---------------------
     function homepage(className) {

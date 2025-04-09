@@ -315,3 +315,51 @@ function displayMessage(dialog, type, message) {
   messageEl.textContent = message;
   messageEl.style.color = type === 'error' ? 'red' : 'green';
 }
+
+// 取得「開始預約行程」按鈕
+const startBookingBtn = document.querySelector('#startBooking');
+
+// 綁定事件
+startBookingBtn.addEventListener('click', async () => {
+  const token = localStorage.getItem('jwtToken');
+  if (!token) {
+    // 如果未登入，則顯示登入彈窗
+    dialogSignin.style.display = "block";
+    dialogSignup.style.display = "none";
+    dialogOverlay.classList.add("active");
+    return;
+  }
+
+  // 收集所需的預定資料，例如 attractionId、日期、時段與費用
+  const bookingData = {
+    attractionId: Number(attractionId), // 從 URL 解析或其他方式取得
+    date: dateInput.value,             // 日期取自指定的 input
+    // 假設根據選項判斷預約時段，例如：
+    time: optionA.checked ? "morning" : "afternoon",
+    price: optionA.checked ? 2000 : 2500
+  };
+
+  try {
+    // 發送預定行程的 API 請求到後端
+    const response = await fetch('/api/booking', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify(bookingData)
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.ok) {
+      // 預定行程 API 成功，導向 /booking 頁面
+      window.location.href = "/booking";
+    } else {
+      // 如果後端有回傳錯誤訊息，可在此處提示
+      alert(result.message || "建立預定行程失敗");
+    }
+  } catch (error) {
+    console.error("建立預定行程失敗：", error);
+  }
+});
