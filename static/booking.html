@@ -22,16 +22,17 @@
   <main>
     <header class="section-container"></header>
     <div class="booking section-container">
-      <img class="booking-image"></img>
-      <div class="booking-info">
+      <img class="booking-image" alt="圖片">
+      <div class="booking-info" style="position: relative;">  <!-- 加上定位，使後代的絕對元素以此為參照 -->
         <div class="booking-title"></div>
         <div class="booking-date"><span>日期：</span></div>
         <div class="booking-time"><span>時間：</span></div>
         <div class="booking-price"><span>費用：</span></div>
         <div class="booking-address"><span>地點：</span></div>
+        <img class="delete-icon" src="/static/image/delete.png" alt="刪除按鈕"/>
       </div>
-      <img class="delete-icon" src="/static/image/delete.png"/>
     </div>
+    
     <!-- 空狀態顯示用 -->
     <div class="booking-empty section-container" style="display: none;">
       <p class="empty-message">目前沒有任何預定行程</p>
@@ -84,5 +85,8 @@
       <div class="booking-button-text">確認訂購並付款</div>
     </div>
   </div>
+  <footer>
+    <div class="footer-text">COPYRIGHT © 2021 台北一日遊</div>
+  </footer>
 </body>
 </html>

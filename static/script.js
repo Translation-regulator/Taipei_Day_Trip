@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = localStorage.getItem('jwtToken');
         if (token) {
             // 如果有登入，則直接導向 booking.html
-            window.location.href = "/static/booking.html";
+            window.location.href = "/booking";
         } else {
             // 如果未登入，則開啟登入的 pop-up 視窗
             dialogSignin.style.display = "block";
@@ -176,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+
+
     // --------------------- 取得表單與按鈕 ---------------------
     const dialogOverlay = document.getElementById("dialog-overlay");
     const dialogCloseBtns = document.querySelectorAll(".dialog-close-btn");
@@ -200,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // **刪除 dialogOverlay 的點擊事件，避免點擊遮罩層關閉**
+    // 刪除 dialogOverlay 的點擊事件，避免點擊遮罩層關閉
     
     toSignupBtn.addEventListener("click", () => {
         dialogSignin.style.display = "none";
