@@ -82,25 +82,23 @@ header {
     padding-bottom: 30px;
 }
 
-/* 主要內容：含圖片和預訂資訊 */
 .booking {
     max-width: 980px;
     margin: 0 auto;
-    display: flex;         /* 預設為橫向排列 */
+    display: flex;       
     position: relative;
 }
 
 .booking-image {
     max-width: 250px;
-    width: 100%;          /* 確保圖片區塊全寬 */
+    width: 100%;         
     height: 200px;
-    padding-right: 30px;   /* 與右邊資訊做間距 */
-    object-fit: cover;     /* 如圖片不滿尺寸，自動裁切 */
+    padding-right: 30px;   
+    object-fit: cover;     
 }
 
-/* 假設包住標題、日期、時間等資訊的容器 */
 .booking-info {
-    width: 100%; /* 讓這個容器佔滿剩餘空間 */
+    width: 100%; 
 }
 
 .booking-title {
@@ -285,6 +283,70 @@ header {
     color: rgba(255, 255, 255, 1);
 }
 
+.credit-card-number,
+.credit-card-expiration,
+.credit-card-cvv {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px; 
+}
+
+/* Label 統一寬度 */
+.credit-card-number label,
+.credit-card-expiration label,
+.credit-card-cvv label {
+  width: 80px;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+/* TapPay 欄位與 Label 間距 */
+.tpfield {
+  width: 200px;
+  height: 38px;
+  border-radius: 5px;
+  border: 1px solid rgba(232, 232, 232, 1);
+  padding-left: 10px;
+}
+
+.booking-terms {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end; 
+  flex-wrap: wrap;
+}
+
+.booking-fee {
+  font-family: Noto Sans TC;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: right;
+  color: rgba(102, 102, 102, 1);
+}
+
+.booking-button {
+  width: 173px;
+  height: 36px;
+  border-radius: 5px;
+  background: rgba(68, 136, 153, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* 按鈕內文字 */
+.booking-button-text {
+  font-family: Noto Sans TC;
+  font-weight: 400;
+  font-size: 19px;
+  color: white;
+}
+
+
+
 footer {
     position: fixed;      
     background: rgba(117, 117, 117, 1);
@@ -311,17 +373,17 @@ footer {
 /* 平板版設定：當 viewport 寬度為 768px 或更小 */
 @media (max-width: 768px) {
     .booking {
-        position: relative; /* 加上此行，讓容器成為定位參照 */
+        position: relative; 
         flex-direction: column;
         align-items: center;
-        width: 100%;      /* 填滿整個畫面 */
-        max-width: none;  /* 取消 max-width 限制 */
-        margin: 0;        /* 取消自動置中 */
-        padding:10px;  /* 如有需要左右內邊距 */
+        width: 100%;      
+        max-width: none;  
+        margin: 0;        
+        padding:10px;  
     }
     
     .delete-icon {
-        position: absolute; /* 將此元素設為絕對定位 */
+        position: absolute; 
         top: auto;
         bottom: 10px;
         right: 10px;
@@ -360,11 +422,11 @@ footer {
     }
 
     .booking {
-        position: relative; /* 同樣確保容器為定位參照 */
+        position: relative; 
     }
 
     .delete-icon {
-        position: absolute; /* 確保 delete-icon 以絕對定位方式顯示 */
+        position: absolute; 
         top: auto;
         bottom: 0px;
         right: 0px;

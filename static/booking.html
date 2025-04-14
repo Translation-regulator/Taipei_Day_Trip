@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/booking.css"/>
   <link rel="shortcut icon" href="#">
   <script src="/static/booking.js" defer></script>
+  <script src="https://js.tappaysdk.com/tpdirect/v5.12.0"></script>
 </head>
 <body>
   <div class="container">
@@ -23,7 +24,7 @@
     <header class="section-container"></header>
     <div class="booking section-container">
       <img class="booking-image" alt="圖片">
-      <div class="booking-info" style="position: relative;">  <!-- 加上定位，使後代的絕對元素以此為參照 -->
+      <div class="booking-info" style="position: relative;">  
         <div class="booking-title"></div>
         <div class="booking-date"><span>日期：</span></div>
         <div class="booking-time"><span>時間：</span></div>
@@ -64,24 +65,25 @@
   <div class="credit-card-info section-container">
     <div class="credit-card-title">信用卡付款資訊</div>
     <div class="credit-card-number">
-      <label for="card-number">卡片號碼：</label>
-      <input type="text" id="card-number" name="card-number" placeholder="**** **** **** ****" pattern="[0-9]{16}" required>
+      <label>卡片號碼：</label>
+      <div id="card-number" class="tpfield"></div>
     </div>
     <div class="credit-card-expiration">
-      <label for="card-expiration">過期時間：</label>
-      <input type="text" id="card-expiration" name="card-expiration" placeholder="MM/YY" pattern="[0-9]{2}/[0-9]{2}" required>
+      <label>過期時間：</label>
+      <div id="card-expiration" class="tpfield"></div>
     </div>
     <div class="credit-card-cvv">
-      <label for="card-cvv">驗證密碼：</label>
-      <input type="password" id="card-cvv" name="card-cvv" placeholder="CVV" pattern="[0-9]{3}" required>
+      <label>驗證密碼：</label>
+      <div id="card-cvv" class="tpfield"></div>
     </div>
   </div>
+  
 
   <div class="booking-hr"></div>
 
   <div class="booking-terms section-container">
     <div class="booking-fee">總價：新台幣2000元</div>
-    <div class="booking-button">
+    <div class="booking-button pay-button">
       <div class="booking-button-text">確認訂購並付款</div>
     </div>
   </div>

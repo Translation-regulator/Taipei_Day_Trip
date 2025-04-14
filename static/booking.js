@@ -31,15 +31,15 @@ document.addEventListener("DOMContentLoaded", () => {
       updateLoginStatus();
       window.location.reload();
     } else {
-      // 若未登入，導向登入頁面或顯示登入彈窗（依專案需求決定）
-      window.location.href = "/login"; // 或改成開啟登入彈窗
+      // 未登入，導向登入頁面
+      window.location.href = "/login";
     }
   });
 
   // --------------------- 驗證登入狀態 ---------------------
   const token = localStorage.getItem("jwtToken");
   if (!token) {
-    // 沒有登入則導向首頁（或其它指定頁面）
+    // 沒有登入則導向首頁
     window.location.href = "/";
     return;
   }
@@ -52,13 +52,14 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { Authorization: "Bearer " + token },
       });
       if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.data) {
-        updateBookingPage(data.data);
+      if (result.data) {
+        // 存成全域，供後續付款流程使用
+        window.bookingData = result.data;
+        updateBookingPage(result.data);
       } else {
-        console.log("目前沒有任何預定行程");
-        // 顯示「空」狀態，隱藏其他區塊
+        // 無預定行程，顯示空狀態
         document.querySelector(".booking-empty").style.display = "block";
         document.querySelector(".booking").style.display = "none";
         document.querySelector(".contact-info").style.display = "none";
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".booking-terms").style.display = "none";
         document.querySelectorAll(".booking-hr").forEach(hr => hr.style.display = "none");
 
-        // ===== 新增這裡：取使用者名稱並顯示 =====
+        // 顯示使用者名稱
         const userRes = await fetch("/api/user/auth", {
           method: "GET",
           headers: { Authorization: "Bearer " + token },
@@ -97,13 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 景點名稱
     const bookingTitle = document.querySelector(".booking-title");
-    if (bookingTitle && bookingInfo.attraction.name) {
+    if (bookingTitle) {
       bookingTitle.textContent = `台北一日遊：${bookingInfo.attraction.name}`;
     }
 
     // 時間
     const bookingTime = document.querySelector(".booking-time");
-    if (bookingTime && bookingInfo.time) {
+    if (bookingTime) {
       const timeText =
         bookingInfo.time === "morning"
           ? "早上9點到下午4點"
@@ -115,111 +116,165 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 地址
     const bookingAddress = document.querySelector(".booking-address");
-    if (bookingAddress && bookingInfo.attraction.address) {
+    if (bookingAddress) {
       bookingAddress.innerHTML = `<span>地點：</span>${bookingInfo.attraction.address}`;
     }
 
     // 日期
     const bookingDate = document.querySelector(".booking-date");
-    if (bookingDate && bookingInfo.date) {
+    if (bookingDate) {
       bookingDate.innerHTML = `<span>日期：</span>${bookingInfo.date}`;
     }
 
     // 圖片
     const bookingImage = document.querySelector(".booking-image");
-    if (bookingImage && bookingInfo.attraction.image) {
+    if (bookingImage) {
       bookingImage.src = bookingInfo.attraction.image;
     }
 
-    // 價格（原有費用區塊更新）
+    // 費用
     const bookingPrice = document.querySelector(".booking-price");
-    if (bookingPrice && bookingInfo.price) {
+    if (bookingPrice) {
       bookingPrice.innerHTML = `<span>費用：</span>新台幣${bookingInfo.price}元`;
     }
-    
-    // --------------------- 更新 booking-fee（總價） ---------------------
+
+    // 總價
     const bookingFee = document.querySelector(".booking-fee");
-    if (bookingFee && bookingInfo.price) {
+    if (bookingFee) {
       bookingFee.textContent = `總價：新台幣${bookingInfo.price}元`;
     }
 
-    // --------------------- 刪除預定行程功能 ---------------------
+    // 刪除預定行程功能
     const deleteIcon = document.querySelector(".delete-icon");
     if (deleteIcon) {
       deleteIcon.addEventListener("click", async () => {
         try {
-          const response = await fetch("/api/booking", {
+          const res = await fetch("/api/booking", {
             method: "DELETE",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            headers: { Authorization: "Bearer " + token },
           });
-
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-
-          const result = await response.json();
-          if (result.ok) {
-            // 清除畫面資訊
+          if (!res.ok) throw new Error("Network response was not ok");
+          const json = await res.json();
+          if (json.ok) {
+            // 顯示空狀態
             document.querySelector(".booking").style.display = "none";
-            sessionStorage.removeItem("bookingInfo");
-
-            // 顯示空狀態頁面
             document.querySelector(".booking-empty").style.display = "block";
             document.querySelector(".contact-info").style.display = "none";
             document.querySelector(".credit-card-info").style.display = "none";
             document.querySelector(".booking-terms").style.display = "none";
-            document.querySelectorAll(".booking-hr").forEach((hr) => {
-              hr.style.display = "none";
-            });
-
-            console.log("預定行程已刪除");
+            document.querySelectorAll(".booking-hr").forEach(hr => hr.style.display = "none");
           }
-        } catch (error) {
-          console.error("刪除預定行程失敗：", error);
+        } catch (err) {
+          console.error("刪除預定行程失敗：", err);
         }
       });
     }
-  }
-
-  // --------------------- 從 sessionStorage 載入預定資訊（可選） ---------------------
-  const bookingInfoStr = sessionStorage.getItem("bookingInfo");
-  if (bookingInfoStr) {
-    const bookingInfo = JSON.parse(bookingInfoStr);
-    updateBookingPage(bookingInfo);
   }
 
   // --------------------- 自動填入聯絡人姓名與 Email ---------------------
   async function fillContactInfo() {
     try {
-      const response = await fetch("/api/user/auth", {
+      const res = await fetch("/api/user/auth", {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        headers: { Authorization: "Bearer " + token },
       });
-
-      if (!response.ok) {
-        throw new Error("無法取得使用者資訊");
+      if (!res.ok) throw new Error("無法取得使用者資訊");
+      const json = await res.json();
+      if (json.data) {
+        document.getElementById("name").value = json.data.name || "";
+        document.getElementById("email").value = json.data.email || "";
       }
-
-      const result = await response.json();
-      if (result.data) {
-        const userNameInput = document.getElementById("name");
-        const userEmailInput = document.getElementById("email");
-
-        if (userNameInput && result.data.name) {
-          userNameInput.value = result.data.name;
-        }
-        if (userEmailInput && result.data.email) {
-          userEmailInput.value = result.data.email;
-        }
-      }
-    } catch (error) {
-      console.error("載入使用者資料失敗：", error);
+    } catch (err) {
+      console.error("載入使用者資料失敗：", err);
     }
   }
-
   fillContactInfo();
+
+  // --------------------- TapPay SDK 初始化 ---------------------
+  TPDirect.setupSDK(
+    159804,
+    'app_CD0K2pdI97CJ3LXcWxImJ7FSDQ0Zz3A9mtuAxEhJ5NgnDmoA9BGklR8jReWo',
+    'sandbox'
+  );
+  TPDirect.card.setup({
+    fields: {
+      number: { element: '#card-number', placeholder: '**** **** **** ****' },
+      expirationDate: { element: '#card-expiration', placeholder: 'MM / YY' },
+      ccv: { element: '#card-cvv', placeholder: 'CVV' }
+    },
+    styles: {
+      'input': { 'font-size': '16px' },
+      '.valid': { 'color': 'green' },
+      '.invalid': { 'color': 'red' }
+    }
+  });
+
+  // --------------------- 確認訂購並付款 ---------------------
+  const payBtn = document.querySelector('.pay-button');
+  payBtn.addEventListener('click', () => {
+    // 1. 檢查聯絡資訊
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    if (!name || !email || !phone) {
+      alert('請填寫完整聯絡資訊');
+      return;
+    }
+
+    // 2. 檢查 TapPay 欄位是否都 valid
+    const tappayStatus = TPDirect.card.getTappayFieldsStatus();
+    console.log("TapPay 欄位狀態：", tappayStatus);
+    if (!tappayStatus.canGetPrime) {
+      alert('請確認信用卡資訊是否輸入正確');
+      return;
+    }
+
+    // 3. 取得 prime
+    TPDirect.card.getPrime(async (result) => {
+      console.log("getPrime result：", result);
+      if (result.status !== 0) {
+        alert('信用卡驗證失敗，請檢查卡號、到期日及安全碼');
+        return;
+      }
+      const prime = result.card.prime;
+      console.log("取得 prime：", prime);
+
+      // 4. 組 order 資料
+      const bookingInfo = window.bookingData;
+      const body = {
+        prime,
+        order: {
+          price: bookingInfo.price,
+          trip: {
+            attraction: bookingInfo.attraction,
+            date: bookingInfo.date,
+            time: bookingInfo.time
+          },
+          contact: { name, email, phone }
+        }
+      };
+
+      // 5. 呼叫後端建立訂單並付款
+      try {
+        const resp = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify(body)
+        });
+        const json = await resp.json();
+        if (json.data && json.data.number) {
+          // 6. 導向 thankyou 頁面
+          window.location.href = `/thankyou?number=${json.data.number}`;
+        } else {
+          alert(json.message || '訂單建立失敗');
+        }
+      } catch (e) {
+        console.error('建立訂單失敗：', e);
+        alert('伺服器錯誤，請稍後再試');
+      }
+    });
+  });
 });
