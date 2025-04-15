@@ -410,6 +410,11 @@ TAPPAY_PARTNER_KEY = os.getenv("TAPPAY_PARTNER_KEY")
 TAPPAY_MERCHANT_ID = os.getenv("TAPPAY_MERCHANT_ID")
 TAPPAY_ENDPOINT = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
 
+# 檢查是否讀取成功
+if not TAPPAY_PARTNER_KEY or not TAPPAY_MERCHANT_ID:
+    logging.error("❌ 無法讀取 TapPay 設定，請確認 .env 是否正確")
+    raise RuntimeError("Missing TapPay credentials in .env")
+
 # Helper: 產生訂單編號 (YYYYMMDDHHmmss + 隨機三位數)
 def generate_order_number() -> str:
     now = datetime.now()
@@ -444,50 +449,61 @@ class OrderRequest(BaseModel):
 
 @app.post("/api/orders")
 def create_order(request: Request, body: OrderRequest):
-    # 驗證 JWT
+    # 1. 驗證 JWT
     payload = verify_token(request)
     if not payload:
         raise HTTPException(status_code=403, detail="未登入系統，拒絕存取")
     user_id = payload["id"]
 
-    # 呼叫 TapPay API
+    # 2. 產生訂單編號
+    order_number = generate_order_number()
+
+    # 3. 建立 TapPay 請求 payload
     tappay_payload = {
-        "prime": body.prime,
-        "partner_key": TAPPAY_PARTNER_KEY,
-        "merchant_id": TAPPAY_MERCHANT_ID,
-        "amount": body.order.price,
-        "details": f"台北一日遊：{body.order.trip.attraction.name}",
+        "prime":        body.prime,
+        "partner_key":  TAPPAY_PARTNER_KEY,
+        "merchant_id":  TAPPAY_MERCHANT_ID,
+        "amount":       body.order.price,
+        "order_number": order_number,
+        "details":      f"台北一日遊：{body.order.trip.attraction.name}",
         "cardholder": {
             "phone_number": body.order.contact.phone,
-            "name": body.order.contact.name,
-            "email": body.order.contact.email
+            "name":         body.order.contact.name,
+            "email":        body.order.contact.email
         },
-        "remember": False
+        "remember": True
     }
 
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": TAPPAY_PARTNER_KEY
+    }
+
+    # 4. 發送 TapPay 請求
     try:
-        resp = requests.post(
-            TAPPAY_ENDPOINT,
-            json=tappay_payload,
-            headers={"x-api-key": TAPPAY_PARTNER_KEY}
-        )
+        resp = requests.post(TAPPAY_ENDPOINT, headers=headers, json=tappay_payload)
+        logging.info("TapPay HTTP Status Code: %s", resp.status_code)
+        logging.info("TapPay HTTP Headers: %s", resp.headers)
+        logging.info("TapPay Response Body: %s", resp.text)
+
         pay_result = resp.json()
+        logging.info("TapPay 回傳：%s", pay_result)
     except Exception as e:
         logging.error("TapPay 呼叫失敗：%s", e)
         raise HTTPException(status_code=500, detail="伺服器內部錯誤")
 
-    # 分析付款結果
+    # 5. 處理回傳
     status = 0 if pay_result.get("status") == 0 else 1
     message = pay_result.get("msg") or ("付款成功" if status == 0 else "付款失敗")
-    order_number = generate_order_number()
 
-    # 儲存訂單至資料庫
+    # 6. 儲存訂單
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
             sql = (
-                "INSERT INTO orders (order_number, user_id, price, attraction_id, date, time, "
-                "contact_name, contact_email, contact_phone, status) "
+                "INSERT INTO orders "
+                "(order_number, user_id, price, attraction_id, date, time, "
+                " contact_name, contact_email, contact_phone, status) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
             )
             cursor.execute(sql, (
@@ -509,16 +525,16 @@ def create_order(request: Request, body: OrderRequest):
     finally:
         conn.close()
 
+    # 7. 回傳結果
     return {
         "data": {
             "number": order_number,
             "payment": {
-                "status": status,
+                "status":  status,
                 "message": message
             }
         }
     }
-
 
 # POST /api/orders
 @app.get("/api/order/{orderNumber}")

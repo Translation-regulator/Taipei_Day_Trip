@@ -3,9 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/thankyou.css"/>
+  <link rel="shortcut icon" href="#">
   <title>Thank You</title>
 </head>
 <body>
-  
+  <div class="container">
+    <nav>
+      <div class="nav-title">台北一日遊</div>
+      <div>
+        <div class="nav-reserve">預定行程</div>
+        <div class="nav-login">登入/註冊</div>
+      </div>
+    </nav>
+  </div>
+  <div class="thankyou-section">
+    <h1>感謝您的預訂！</h1>
+    <p id="order-number">訂單編號載入中...</p>
+    <div class="thankyou-note">請將訂單編號妥善保管以利專員核對</div>
+    <div class="thankyou-note">我們會在24小時內與您聯繫，請保持手機暢通</div>
+    <div class="thankyou-note">如有任何問題，請聯繫我們的客服</div>
+    <div class="thankyou-note">客服電話：0800-123-456</div>
+    
+  </div>
+
+  <footer>
+    <div class="footer-text">COPYRIGHT © 2021 台北一日遊</div>
+  </footer>
+
+  <script>
+    // 抓網址參數
+    const params = new URLSearchParams(window.location.search);
+    const orderNumber = params.get('number');
+
+    // 插入到頁面中
+    if (orderNumber) {
+      document.getElementById("order-number").textContent = `您的訂單編號：${orderNumber}`;
+    } else {
+      document.getElementById("order-number").textContent = `查無訂單編號`;
+    }
+
+        // --------------------- 點擊「台北一日遊」返回首頁 ---------------------
+        function homepage(className) {
+        const button = document.querySelector(`.${className}`);
+        if (button) {
+            button.addEventListener("click", () => {
+                window.location.href = "/";
+            });
+        } else {
+            console.error(`Element with class "${className}" not found.`);
+        }
+    }
+    homepage("nav-title");
+
+    // --------------------- 取得目前使用者資訊 ---------------------
+    async function getUserInfo(token) {
+        try {
+          const response = await fetch('/api/user/auth', {
+            headers: { 'Authorization': 'Bearer ' + token }
+          });
+          // 可根據需求在頁面上顯示使用者名稱或其他資訊
+        } catch (error) {
+          console.error('取得使用者資訊失敗：', error);
+        }
+      }
+    // --------------------- 登入狀態檢查與更新 ---------------------
+    const loginButton = document.querySelector(".nav-login");
+    function updateLoginStatus() {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            loginButton.textContent = "登出系統";
+            // 若需要，可呼叫 getUserInfo(token) 取得使用者資料
+            getUserInfo(token);
+        } else {
+            loginButton.textContent = "登入/註冊";
+        }
+    }
+    updateLoginStatus();
+
+    // 修改 loginButton 點擊事件：已登入則登出，未登入則開啟 pop-up
+    loginButton.addEventListener("click", () => {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            // 登出流程
+            localStorage.removeItem('jwtToken');
+            updateLoginStatus();
+            window.location.href = "/";
+        } else {
+            // 開啟 pop-up 登入畫面
+            dialogSignin.style.display = "block";
+            dialogSignup.style.display = "none";
+            dialogOverlay.classList.add("active");
+        }
+    });
+  </script>
 </body>
 </html>
