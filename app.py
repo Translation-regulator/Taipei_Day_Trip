@@ -536,7 +536,6 @@ def create_order(request: Request, body: OrderRequest):
         }
     }
 
-# POST /api/orders
 @app.get("/api/order/{orderNumber}")
 def get_order(orderNumber: str, request: Request):
     # 驗證 JWT
@@ -546,7 +545,8 @@ def get_order(orderNumber: str, request: Request):
 
     conn = get_db_connection()
     try:
-        with conn.cursor(dictionary=True) as cursor:
+        # 直接用一般 cursor()，fetchone() 回傳 dict
+        with conn.cursor() as cursor:
             sql = "SELECT * FROM orders WHERE order_number = %s AND user_id = %s"
             cursor.execute(sql, (orderNumber, payload["id"]))
             order = cursor.fetchone()
@@ -557,7 +557,7 @@ def get_order(orderNumber: str, request: Request):
             trip = {
                 "attraction": {
                     "id": order["attraction_id"],
-                    "name": "",  # 可以額外查 attractions 表填入
+                    "name": "",  # 可再查 attractions 表補全
                     "address": "",
                     "image": ""
                 },
