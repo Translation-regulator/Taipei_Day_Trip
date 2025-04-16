@@ -4,14 +4,15 @@ import logging
 import pymysql
 import jwt
 import bcrypt  # 引入 bcrypt 用於加密密碼
-from fastapi import FastAPI, Request, Query
+from fastapi import FastAPI, Request, Query, HTTPException
+import requests
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-import uvicorn
 from dotenv import load_dotenv
 from pydantic import BaseModel
 from jwt.exceptions import PyJWTError
 from datetime import timedelta, datetime
+import random
 
 # 載入環境變數
 load_dotenv()
@@ -404,5 +405,186 @@ def delete_booking(request: Request):
         connection.close()
 
 
-if __name__ == "__main__":
-    uvicorn.run("app:app", host="localhost", port=8000, reload=True)
+# TapPay 設定 (請於 .env 中設定)
+TAPPAY_PARTNER_KEY = os.getenv("TAPPAY_PARTNER_KEY")
+TAPPAY_MERCHANT_ID = os.getenv("TAPPAY_MERCHANT_ID")
+TAPPAY_ENDPOINT = "https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime"
+
+# 檢查是否讀取成功
+if not TAPPAY_PARTNER_KEY or not TAPPAY_MERCHANT_ID:
+    logging.error("❌ 無法讀取 TapPay 設定，請確認 .env 是否正確")
+    raise RuntimeError("Missing TapPay credentials in .env")
+
+# Helper: 產生訂單編號 (YYYYMMDDHHmmss + 隨機三位數)
+def generate_order_number() -> str:
+    now = datetime.now()
+    timestamp = now.strftime("%Y%m%d%H%M%S")
+    random_suffix = str(random.randint(100, 999))
+    return f"{timestamp}{random_suffix}"
+
+class OrderContact(BaseModel):
+    name: str
+    email: str
+    phone: str
+
+class AttractionInfo(BaseModel):
+    id: int
+    name: str
+    address: str
+    image: str
+
+class TripInfo(BaseModel):
+    attraction: AttractionInfo
+    date: str
+    time: str
+
+class OrderData(BaseModel):
+    price: int
+    trip: TripInfo
+    contact: OrderContact
+
+class OrderRequest(BaseModel):
+    prime: str
+    order: OrderData
+
+@app.post("/api/orders")
+def create_order(request: Request, body: OrderRequest):
+    # 1. 驗證 JWT
+    payload = verify_token(request)
+    if not payload:
+        raise HTTPException(status_code=403, detail="未登入系統，拒絕存取")
+    user_id = payload["id"]
+
+    # 2. 產生訂單編號
+    order_number = generate_order_number()
+
+    # 3. 建立 TapPay 請求 payload
+    tappay_payload = {
+        "prime":        body.prime,
+        "partner_key":  TAPPAY_PARTNER_KEY,
+        "merchant_id":  TAPPAY_MERCHANT_ID,
+        "amount":       body.order.price,
+        "order_number": order_number,
+        "details":      f"台北一日遊：{body.order.trip.attraction.name}",
+        "cardholder": {
+            "phone_number": body.order.contact.phone,
+            "name":         body.order.contact.name,
+            "email":        body.order.contact.email
+        },
+        "remember": True
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": TAPPAY_PARTNER_KEY
+    }
+
+    # 4. 發送 TapPay 請求
+    try:
+        resp = requests.post(TAPPAY_ENDPOINT, headers=headers, json=tappay_payload)
+        logging.info("TapPay HTTP Status Code: %s", resp.status_code)
+        logging.info("TapPay Response Body: %s", resp.text)
+        pay_result = resp.json()
+    except Exception as e:
+        logging.error("TapPay 呼叫失敗：%s", e)
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
+
+    # 5. 處理回傳
+    status = 0 if pay_result.get("status") == 0 else 1
+    message = pay_result.get("msg") or ("付款成功" if status == 0 else "付款失敗")
+
+    # 6. 儲存訂單並刪除 booking（同一 transaction）
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # 6.1 Insert into orders
+            insert_sql = """
+                INSERT INTO orders
+                (order_number, user_id, price, attraction_id, date, time,
+                 contact_name, contact_email, contact_phone, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(insert_sql, (
+                order_number,
+                user_id,
+                body.order.price,
+                body.order.trip.attraction.id,
+                body.order.trip.date,
+                body.order.trip.time,
+                body.order.contact.name,
+                body.order.contact.email,
+                body.order.contact.phone,
+                status
+            ))
+
+            # 6.2 刪除該使用者的預定行程
+            delete_sql = "DELETE FROM bookings WHERE user_id = %s"
+            cursor.execute(delete_sql, (user_id,))
+
+        # 一次 commit，確保 insert & delete 同步成功
+        conn.commit()
+    except Exception as e:
+        logging.error("儲存訂單或刪除預定資料失敗：%s", e)
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
+    finally:
+        conn.close()
+
+    # 7. 回傳結果
+    return {
+        "data": {
+            "number": order_number,
+            "payment": {
+                "status":  status,
+                "message": message
+            }
+        }
+    }
+
+
+@app.get("/api/order/{orderNumber}")
+def get_order(orderNumber: str, request: Request):
+    # 驗證 JWT
+    payload = verify_token(request)
+    if not payload:
+        raise HTTPException(status_code=403, detail="未登入系統，拒絕存取")
+
+    conn = get_db_connection()
+    try:
+        # 直接用一般 cursor()，fetchone() 回傳 dict
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM orders WHERE order_number = %s AND user_id = %s"
+            cursor.execute(sql, (orderNumber, payload["id"]))
+            order = cursor.fetchone()
+            if not order:
+                return {"data": None}
+
+            # 組裝回傳資料
+            trip = {
+                "attraction": {
+                    "id": order["attraction_id"],
+                    "name": "",  # 可再查 attractions 表補全
+                    "address": "",
+                    "image": ""
+                },
+                "date": str(order["date"]),
+                "time": order["time"]
+            }
+            contact = {
+                "name": order["contact_name"],
+                "email": order["contact_email"],
+                "phone": order["contact_phone"]
+            }
+
+            return {"data": {
+                "number": order["order_number"],
+                "price": order["price"],
+                "trip": trip,
+                "contact": contact,
+                "status": order["status"]
+            }}
+    except Exception as e:
+        logging.error("取得訂單資訊失敗：%s", e)
+        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
+    finally:
+        conn.close()
+

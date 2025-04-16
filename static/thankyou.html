@@ -3,9 +3,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/thankyou.css"/>
+  <link rel="shortcut icon" href="#">
   <title>Thank You</title>
 </head>
 <body>
-  
+  <div class="container">
+    <nav>
+      <div class="nav-title">台北一日遊</div>
+      <div>
+        <div class="nav-reserve">預定行程</div>
+        <div class="nav-login">登入/註冊</div>
+      </div>
+    </nav>
+  </div>
+  <div class="thankyou-section">
+    <h1>感謝您的預訂！</h1>
+    <p id="order-number">訂單編號載入中...</p>
+    <div class="thankyou-note">請將訂單編號妥善保管以利專員核對</div>
+    <div class="thankyou-note">請保持手機暢通，我們將盡快與您聯繫</div>
+    <div class="thankyou-note">如有任何問題，請聯繫我們的客服</div>
+    <div class="thankyou-note">客服電話：0800-123-456</div>
+  </div>
+
+  <footer>
+    <div class="footer-text">COPYRIGHT © 2021 台北一日遊</div>
+  </footer>
+
+  <script>
+    // --------------------- 載入訂單並驗證 ---------------------
+    async function loadOrder() {
+      const token = localStorage.getItem('jwtToken');
+      if (!token) {
+        // 未登入則導回首頁
+        window.location.href = "/";
+        return;
+      }
+
+      // 從 URL 取得訂單編號
+      const params = new URLSearchParams(window.location.search);
+      const orderNumber = params.get('number');
+      if (!orderNumber) {
+        document.getElementById("order-number").textContent = "查無訂單編號";
+        return;
+      }
+
+      try {
+        // 呼叫後端 API 取得訂單，後端會檢查該訂單是否屬於目前登入使用者
+        const res = await fetch(`/api/order/${orderNumber}`, {
+          headers: { "Authorization": "Bearer " + token }
+        });
+
+        if (!res.ok) {
+          document.getElementById("order-number").textContent = "查無此訂單或未授權存取";
+          return;
+        }
+
+        const result = await res.json();
+        const data = result.data;
+        if (data && data.number) {
+          document.getElementById("order-number").textContent = `您的訂單編號：${data.number}`;
+        } else {
+          document.getElementById("order-number").textContent = "查無此訂單或未授權存取";
+        }
+      } catch (error) {
+        console.error("訂單載入失敗：", error);
+        document.getElementById("order-number").textContent = "訂單載入失敗，請稍後再試";
+      }
+    }
+    document.addEventListener("DOMContentLoaded", loadOrder);
+
+    // --------------------- 點擊「台北一日遊」返回首頁 ---------------------
+    function homepage(className) {
+      const button = document.querySelector(`.${className}`);
+      if (button) {
+        button.addEventListener("click", () => {
+          window.location.href = "/";
+        });
+      } else {
+        console.error(`Element with class "${className}" not found.`);
+      }
+    }
+    homepage("nav-title");
+
+    // --------------------- 取得目前使用者資訊（可選） ---------------------
+    async function getUserInfo(token) {
+      try {
+        await fetch('/api/user/auth', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        // 若需要，可在此處處理回傳資訊顯示使用者名稱等
+      } catch (error) {
+        console.error('取得使用者資訊失敗：', error);
+      }
+    }
+
+    // --------------------- 登入狀態檢查與更新 ---------------------
+    const loginButton = document.querySelector(".nav-login");
+    function updateLoginStatus() {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        loginButton.textContent = "登出系統";
+        getUserInfo(token);
+      } else {
+        loginButton.textContent = "登入/註冊";
+      }
+    }
+    updateLoginStatus();
+
+    // --------------------- 登入/登出按鈕事件 ---------------------
+    loginButton.addEventListener("click", () => {
+      const token = localStorage.getItem('jwtToken');
+      if (token) {
+        // 登出流程
+        localStorage.removeItem('jwtToken');
+        updateLoginStatus();
+        window.location.href = "/";
+      } else {
+        // 開啟登入/註冊 pop-up（請確認 dialogSignin, dialogSignup, dialogOverlay 已定義）
+        dialogSignin.style.display = "block";
+        dialogSignup.style.display = "none";
+        dialogOverlay.classList.add("active");
+      }
+    });
+    // 取得預定行程按鈕
+    const reserveButton = document.querySelector(".nav-reserve");
+
+    // 針對預定行程按鈕新增點擊事件
+    reserveButton.addEventListener("click", () => {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            // 如果有登入，則直接導向 booking.html
+            window.location.href = "/booking";
+        } else {
+            // 如果未登入，則開啟登入的 pop-up 視窗
+            dialogSignin.style.display = "block";
+            dialogSignup.style.display = "none";
+            dialogOverlay.classList.add("active");
+        }
+    });
+  </script>
 </body>
 </html>

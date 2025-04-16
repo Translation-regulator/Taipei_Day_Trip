@@ -1,0 +1,102 @@
+body {
+    font-family: 'Noto Sans TC';
+    margin:0;
+    padding-bottom: 80px;  /* 留出空間讓 footer 不會蓋過圖片 */
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;  /* 設定元素距離視口頂部 0px */
+    left: 0;  /* 可選，確保 nav 距離左邊也為 0 */
+    right: 0;  /* 可選，確保 nav 拉滿全寬 */
+    z-index: 1000;  /* 確保 nav 在其他元素之上 */
+    background-color: #fff;  /* 設定背景色 */
+}
+
+
+nav {
+    display: flex;
+    align-items: center;
+    width: 1200px;
+    justify-content: space-between;
+
+}
+
+.nav-title {
+    font-size: 30px;
+    color: #448899;
+    line-height: 34px;
+    font-weight: 700;
+    padding: 10px 0px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+nav div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    width: 175px;
+    height: 34px;
+
+}
+
+.nav-reserve, .nav-login {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 13.3px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+footer {
+    position: fixed;      
+    background: rgba(117, 117, 117, 1);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.footer-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 1);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.thankyou-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 100px;
+}
+
+.thankyou-note {
+    font-family: Noto Sans TC;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 24px;
+    vertical-align: middle;
+    color: rgba(102, 102, 102, 1);
+
+}
