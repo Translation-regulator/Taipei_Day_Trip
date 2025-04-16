@@ -483,11 +483,8 @@ def create_order(request: Request, body: OrderRequest):
     try:
         resp = requests.post(TAPPAY_ENDPOINT, headers=headers, json=tappay_payload)
         logging.info("TapPay HTTP Status Code: %s", resp.status_code)
-        logging.info("TapPay HTTP Headers: %s", resp.headers)
         logging.info("TapPay Response Body: %s", resp.text)
-
         pay_result = resp.json()
-        logging.info("TapPay 回傳：%s", pay_result)
     except Exception as e:
         logging.error("TapPay 呼叫失敗：%s", e)
         raise HTTPException(status_code=500, detail="伺服器內部錯誤")
@@ -496,17 +493,18 @@ def create_order(request: Request, body: OrderRequest):
     status = 0 if pay_result.get("status") == 0 else 1
     message = pay_result.get("msg") or ("付款成功" if status == 0 else "付款失敗")
 
-    # 6. 儲存訂單
+    # 6. 儲存訂單並刪除 booking（同一 transaction）
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            sql = (
-                "INSERT INTO orders "
-                "(order_number, user_id, price, attraction_id, date, time, "
-                " contact_name, contact_email, contact_phone, status) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            )
-            cursor.execute(sql, (
+            # 6.1 Insert into orders
+            insert_sql = """
+                INSERT INTO orders
+                (order_number, user_id, price, attraction_id, date, time,
+                 contact_name, contact_email, contact_phone, status)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(insert_sql, (
                 order_number,
                 user_id,
                 body.order.price,
@@ -518,9 +516,15 @@ def create_order(request: Request, body: OrderRequest):
                 body.order.contact.phone,
                 status
             ))
-            conn.commit()
+
+            # 6.2 刪除該使用者的預定行程
+            delete_sql = "DELETE FROM bookings WHERE user_id = %s"
+            cursor.execute(delete_sql, (user_id,))
+
+        # 一次 commit，確保 insert & delete 同步成功
+        conn.commit()
     except Exception as e:
-        logging.error("儲存訂單失敗：%s", e)
+        logging.error("儲存訂單或刪除預定資料失敗：%s", e)
         raise HTTPException(status_code=500, detail="伺服器內部錯誤")
     finally:
         conn.close()
@@ -535,6 +539,7 @@ def create_order(request: Request, body: OrderRequest):
             }
         }
     }
+
 
 @app.get("/api/order/{orderNumber}")
 def get_order(orderNumber: str, request: Request):
