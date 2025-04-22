@@ -256,7 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 5. 呼叫後端建立訂單並付款
       try {
-        const resp = await fetch('/api/orders', {
+        const resp = await fetch('/api/order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
