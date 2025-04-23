@@ -59,6 +59,14 @@ nav div{
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    transition: color 0.2s ease; 
+    color: rgba(102, 102, 102, 1);
+}
+
+.nav-reserve:hover,
+.nav-login:hover {
+    color: rgba(51, 51, 51, 1); 
+    font-weight: 600;
 }
 
 .hero {
@@ -79,19 +87,25 @@ nav div{
     width: 1200px;
     height: 169px;
     display: flex;
-    
+    align-items: center;
 }
 
 .overlay {
     color: white;
     border-radius: 10px;
+    box-sizing: border-box;
+    margin-right: 10px;
 }
 
 .slogan-up {
     font-size: 28px;
     font-weight: 700;
     line-height: 24px;
-    padding-bottom: 15px;
+    padding-bottom: 20px;
+    font-family: 'Noto Sans TC';
+    line-height: 24px;
+    vertical-align: middle;
+
 
 }
 
@@ -99,7 +113,10 @@ nav div{
     font-size: 16px;
     font-weight: 700;
     line-height: 24px;
-    padding-bottom: 25px;
+    padding-bottom: 30px;
+    font-family: 'Noto Sans TC';
+    vertical-align: middle;
+
 }
 
 .search-box {
@@ -108,29 +125,39 @@ nav div{
     background: white;
     border-radius: 5px;
     overflow: hidden;
-    width: 400px;
+    width: 100%;          /* 滿寬度，可跟著父容器走 */
+    max-width: 460px;     /* 但不超過460px */
     height: 46px;
+    box-sizing: border-box;
 }
 
+  /* 讓 input 自動填滿剩餘空間，並能縮到更小 */
 .search-box input {
-    flex: 1; /* 讓輸入框填滿剩餘空間 */
+    width: 400px;
+    height:46px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 20px 0px rgba(170, 187, 204, 1);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;    
     border: none;
-    padding: 10px;
-    height: 100%;
-    outline: none;
+    font-family: "Noto Sans TC", sans-serif;
+    padding-left: 15px;
+    font-weight: 700;
     font-size: 16px;
-    display: flex;
-    align-items: center;
+    line-height: 13.3px;
+    vertical-align: middle;
+    color: rgba(117, 117, 117, 1);
 }
 
 .search-box button {
-    width: 60px;
-    height: 46px;
-    border: none;
-    background: url('/static/image/btn.png') no-repeat center;
-    background-size: contain;
-    cursor: pointer;
+flex: 0 0 60px;       /* 固定60px，不縮放也不撐開 */
+height: 100%;
+border: none;
+background: url('/static/image/btn.png') no-repeat center;
+background-size: contain;
+cursor: pointer;
 }
+
 
 .list-bar {
     display: flex;
@@ -168,6 +195,7 @@ nav div{
 }
 
 .list div {
+    font-family: 'Noto Sans TC';
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
@@ -175,7 +203,15 @@ nav div{
     font-weight: 500;
     font-size: 16px;
     line-height: 13.3px;
+    color: rgba(102, 102, 102, 1);
+    transition: color 0.2s ease; 
 }
+
+.list div:hover {
+    color: rgba(51, 51, 51, 1); 
+    font-weight: 600;
+}
+
 
 .row-grid {
     display: grid;
@@ -194,6 +230,11 @@ nav div{
     overflow: hidden;
     border-radius: 5px;
     border: 1px solid rgba(232, 232, 232, 1); /* 套用圖片的 border */
+}
+
+.grid-item:hover {
+    transform: scale(1.05); /* 略為放大，製造浮起效果 */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* 加上陰影 */
 }
 
 
@@ -401,17 +442,19 @@ footer {
 
     .overlay {
         width: 100%; /* 讓容器寬度為100% */
+        
+    }
+
+    .overlay {
+        margin: 0 ;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 
     .img-container-hero {
         width: 100%;
-        padding-left: 10px;
     }
 
-    .search-box {
-        width: 90%;
-        height: 46px;
-    }
 
     .row-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -455,9 +498,8 @@ footer {
     }
 
     .overlay {
-        width: 100%; /* 讓容器寬度為100% */
-        max-width: 100%;
         margin: 0 ;
+        padding-left: 10px;
         padding-right: 10px;
     }
 
@@ -466,20 +508,6 @@ footer {
         margin:0;
         padding-left: 10px;
         padding-right: 10px;
-    }
-
-    .search-box {
-        width: 90%;
-        height: 46px;
-    }
-
-    .search-button {
-        width: 60px !important;
-        height: 46px !important;
-    }
-
-    #search {
-        width: 80%;
     }
 
     .row-grid {

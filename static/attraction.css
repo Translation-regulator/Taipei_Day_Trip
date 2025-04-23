@@ -84,14 +84,12 @@ nav div {
   left: 0;
 }
 
-/* 合併 attraction-info 相關設定 */
 .attraction-info {
   width: 90% !important;
   max-width: 600px;
   margin-left: auto;
 }
 
-/* 箭頭樣式 */
 .arrow-left, .arrow-right {
   position: absolute;
   top: 50%;
