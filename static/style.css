@@ -232,9 +232,15 @@ cursor: pointer;
     border: 1px solid rgba(232, 232, 232, 1); /* 套用圖片的 border */
 }
 
+.card-link {
+    display: block;       
+    text-decoration: none;
+    color: inherit;       
+  }
+
 .grid-item:hover {
-    transform: scale(1.05); /* 略為放大，製造浮起效果 */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* 加上陰影 */
+    transform: scale(1.05); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
 }
 
 

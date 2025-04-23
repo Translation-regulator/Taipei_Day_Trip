@@ -278,73 +278,74 @@ document.addEventListener("DOMContentLoaded", () => {
         loadAttractions(keyword, isMRTSearch);
     }
 
-    // --------------------- 加載景點數據 ---------------------
-    function loadAttractions(keyword, isMRTSearch = false) {
-        if (isLoading || nextPage === null) return;
-        isLoading = true;
-    
-        fetchData(`/api/attractions?page=${nextPage}&keyword=${keyword}`).then(data => {
-            if (!data.data || data.data.length === 0) {
-                isLoading = false;
-                return;
-            }
-    
-            data.data.forEach(attraction => {
-                if (isMRTSearch && attraction.mrt !== keyword) return;
-    
-                const card = createAttractionCard(attraction);
-                gridContainer.appendChild(card); 
-            });
-    
-            nextPage = data.nextPage;
+// --------------------- 加載景點數據 ---------------------
+function loadAttractions(keyword, isMRTSearch = false) {
+    if (isLoading || nextPage === null) return;
+    isLoading = true;
+
+    fetchData(`/api/attractions?page=${nextPage}&keyword=${keyword}`).then(data => {
+        if (!data.data || data.data.length === 0) {
             isLoading = false;
-        }).catch(error => {
-            console.error("載入景點錯誤:", error);
-            isLoading = false;
+            return;
+        }
+
+        data.data.forEach(attraction => {
+            if (isMRTSearch && attraction.mrt !== keyword) return;
+
+            const card = createAttractionCard(attraction);
+            gridContainer.appendChild(card);
         });
-    }
-    
-    function createAttractionCard(attraction) {
-        const card = document.createElement("div");
-        card.classList.add("grid-item");
-    
-        const imgContainer = document.createElement("div");
-        imgContainer.classList.add("img-container");
-    
-        const link = document.createElement("a");
-        link.href = `/attraction/${attraction.id}`;
-    
-        const img = document.createElement("img");
-        img.src = attraction.images[0];  
-        img.alt = attraction.name;
-    
-        link.appendChild(img);
-        imgContainer.appendChild(link);
-    
-        const title = document.createElement("h3");
-        title.textContent = attraction.name;
-        title.classList.add("title-overlay");
-    
-        const infoBar = document.createElement("div");
-        infoBar.classList.add("info-bar");
-    
-        const category = document.createElement("span");
-        category.textContent = attraction.category;
-        category.classList.add("info-text");
-    
-        const mrt = document.createElement("span");
-        mrt.textContent = attraction.mrt;
-        mrt.classList.add("info-text");
-    
-        imgContainer.appendChild(title);
-        infoBar.appendChild(mrt);
-        infoBar.appendChild(category);
-    
-        card.appendChild(imgContainer);
-        card.appendChild(infoBar);
-    
-        return card;
-    }
+
+        nextPage = data.nextPage;
+        isLoading = false;
+    }).catch(error => {
+        console.error("載入景點錯誤:", error);
+        isLoading = false;
+    });
+}
+
+function createAttractionCard(attraction) {
+    // 使用 <a> 作為 grid-item，讓整個卡片可點擊
+    const card = document.createElement("a");
+    card.href = `/attraction/${attraction.id}`;
+    card.classList.add("grid-item", "card-link");
+
+    // 建立圖片區域
+    const imgContainer = document.createElement("div");
+    imgContainer.classList.add("img-container");
+
+    const img = document.createElement("img");
+    img.src = attraction.images[0];
+    img.alt = attraction.name;
+    imgContainer.appendChild(img);
+
+    // 標題覆蓋
+    const title = document.createElement("h3");
+    title.textContent = attraction.name;
+    title.classList.add("title-overlay");
+    imgContainer.appendChild(title);
+
+    // 資訊列（捷運站與分類）
+    const infoBar = document.createElement("div");
+    infoBar.classList.add("info-bar");
+
+    const mrt = document.createElement("span");
+    mrt.textContent = attraction.mrt;
+    mrt.classList.add("info-text");
+
+    const category = document.createElement("span");
+    category.textContent = attraction.category;
+    category.classList.add("info-text");
+
+    infoBar.appendChild(mrt);
+    infoBar.appendChild(category);
+
+    // 將子元素加入卡片
+    card.appendChild(imgContainer);
+    card.appendChild(infoBar);
+
+    return card;
+}
 
     // --------------------- 無限滾動 ---------------------
     function handleScroll() {

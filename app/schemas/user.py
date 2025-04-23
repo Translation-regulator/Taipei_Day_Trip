@@ -10,6 +10,10 @@ class UserCreate(BaseModel):
 class TokenResponse(BaseModel):
     token: str
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+    
 class UserOut(BaseModel):
     id: int
     name: str
