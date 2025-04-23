@@ -16,6 +16,14 @@ DB_CHARSET = os.getenv("DB_CHARSET", "utf8mb4")
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 
+# connection pool
+DB_POOL_SIZE = int(os.getenv("DB_POOL_SIZE", 5))         
+DB_MAX_OVERFLOW = int(os.getenv("DB_MAX_OVERFLOW", 10))  
+DB_POOL_TIMEOUT = int(os.getenv("DB_POOL_TIMEOUT", 30))  
+
+logging.getLogger("sqlalchemy.pool").setLevel(logging.DEBUG)
+logging.getLogger("sqlalchemy.pool").addHandler(logging.StreamHandler())
+
 # TapPay
 TAPPAY_PARTNER_KEY = os.getenv("TAPPAY_PARTNER_KEY")
 TAPPAY_MERCHANT_ID = os.getenv("TAPPAY_MERCHANT_ID")
