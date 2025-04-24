@@ -3,8 +3,8 @@ from typing import Optional
 from datetime import datetime
 
 class UserCreate(BaseModel):
-    name: Optional[str] = None
-    email: EmailStr
+    name: str
+    email: str
     password: str
 
 class TokenResponse(BaseModel):

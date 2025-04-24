@@ -8,7 +8,7 @@ router = APIRouter(prefix="/user", tags=["User"])
 @router.post("", response_model=TokenResponse)
 def signup(user: UserCreate):
     """使用者註冊"""
-    ok, msg, token = create_user(user.name, user.email, user.password)
+    ok, msg, token = create_user(user)
     if not ok:
         raise HTTPException(status_code=400, detail=msg)
     return {"token": token}
