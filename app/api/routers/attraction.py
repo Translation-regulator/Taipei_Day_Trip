@@ -34,17 +34,14 @@ def get_attraction_detail(attraction_id: int):
     try:
         record = fetch_attraction_detail(attraction_id)
         if record is None:
-            # spec 要求 400 而不是 404
             raise HTTPException(
                 status_code=400,
                 detail={"error": True, "message": "景點編號不正確"}
             )
         return {"data": record}
     except HTTPException as http_exc:
-        # 直接回傳我們自定義的 JSON body
         return JSONResponse(status_code=http_exc.status_code, content=http_exc.detail)
     except Exception as e:
-        # 捕捉其他沒有預期到的錯，回 500
         return JSONResponse(
             status_code=500,
             content={"error": True, "message": f"伺服器內部錯誤：{e}"}

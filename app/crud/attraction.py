@@ -12,13 +12,11 @@ def _parse_image_field(raw_field: Optional[str]) -> List[str]:
     if not raw_field:
         return []
     raw_str = raw_field.strip()
-    # JSON 陣列
     if raw_str.startswith('[') and raw_str.endswith(']'):
         try:
             return json.loads(raw_str)
         except json.JSONDecodeError:
             logging.warning("Invalid JSON in image field, fallback to regex extraction")
-    # Regex 抽取圖片 URL
     return re.findall(r'https?://[^\s]+?\.(?:jpg|jpeg|png|gif)', raw_str, flags=re.IGNORECASE)
 
 

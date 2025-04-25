@@ -9,22 +9,18 @@ def create_user(user: UserCreate):
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
-            # 檢查 Email 是否已存在
             cursor.execute("SELECT * FROM users WHERE email = %s", (user.email,))
             if cursor.fetchone():
                 return False, "Email 已重複註冊", None
 
-            # 密碼加密
             hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            # 插入新使用者
             cursor.execute(
                 "INSERT INTO users (name, email, password_hash) VALUES (%s, %s, %s)",
                 (user.name, user.email, hashed_password)
             )
             connection.commit()
 
-            # 產生 Token
             user_id = cursor.lastrowid
             payload = {
                 "id": user_id,

@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import Dict, Optional
 from datetime import date
 
-# ----- Input Models -----
 class OrderContact(BaseModel):
     name: str
     email: str
@@ -28,7 +27,6 @@ class OrderRequest(BaseModel):
     prime: str
     order: OrderData
 
-# ----- Create Response Models -----
 class OrderResult(BaseModel):
     number: str
     payment: Dict
@@ -36,7 +34,6 @@ class OrderResult(BaseModel):
 class OrderCreateResponse(BaseModel):
     data: OrderResult
 
-# ----- Get Response Models -----
 class OrderGetData(BaseModel):
     number: str
     price: int
