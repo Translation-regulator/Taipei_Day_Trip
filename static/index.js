@@ -9,77 +9,61 @@ document.addEventListener("DOMContentLoaded", () => {
     const mrtListContainer = document.querySelector(".list");
 
     const scrollAmount = 1;
+    let observer;
     let nextPage = 0;
     let isLoading = false;
-    let lastKnownScrollPosition = 0;
-    let ticking = false;
 
     // --------------------- Pop-up 訊息顯示工具 ---------------------
     function displayMessage(dialog, type, message) {
-        // 在 .dialog-inner-content 中找到按鈕，並在它之前插入訊息元素
         const container = dialog.querySelector('.dialog-inner-content');
         let messageEl = container.querySelector('.dialog-message');
         if (!messageEl) {
-          messageEl = document.createElement('div');
-          messageEl.classList.add('dialog-message');
-          // 將訊息插入在按鈕之前
-          const button = container.querySelector('.dialog-btn');
-          container.insertBefore(messageEl, button);
+            messageEl = document.createElement('div');
+            messageEl.classList.add('dialog-message');
+            const button = container.querySelector('.dialog-btn');
+            container.insertBefore(messageEl, button);
         }
         messageEl.textContent = message;
         messageEl.style.color = type === 'error' ? 'red' : 'green';
-      }
+    }
 
-    // 取得預定行程按鈕
     const reserveButton = document.querySelector(".nav-reserve");
-
-    // 針對預定行程按鈕新增點擊事件
     reserveButton.addEventListener("click", () => {
         const token = localStorage.getItem('jwtToken');
         if (token) {
-            // 如果有登入，則直接導向 booking.html
             window.location.href = "/booking";
         } else {
-            // 如果未登入，則開啟登入的 pop-up 視窗
             dialogSignin.style.display = "block";
             dialogSignup.style.display = "none";
             dialogOverlay.classList.add("active");
         }
     });
 
-    // --------------------- 點擊「台北一日遊」返回首頁 ---------------------
     function homepage(className) {
         const button = document.querySelector(`.${className}`);
         if (button) {
             button.addEventListener("click", () => {
                 window.location.href = "/";
             });
-        } else {
-            console.error(`Element with class "${className}" not found.`);
         }
     }
     homepage("nav-title");
 
-    // --------------------- 取得目前使用者資訊 ---------------------
     async function getUserInfo(token) {
         try {
-          const response = await fetch('/api/user/auth', {
-            headers: { 'Authorization': 'Bearer ' + token }
-          });
-          // 可根據需求在頁面上顯示使用者名稱或其他資訊
+            await fetch('/api/user/auth', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
         } catch (error) {
-          console.error('取得使用者資訊失敗：', error);
+            console.error('取得使用者資訊失敗：', error);
         }
-      }
-      
+    }
 
-    // --------------------- 登入狀態檢查與更新 ---------------------
     const loginButton = document.querySelector(".nav-login");
     function updateLoginStatus() {
         const token = localStorage.getItem('jwtToken');
         if (token) {
             loginButton.textContent = "登出系統";
-            // 若需要，可呼叫 getUserInfo(token) 取得使用者資料
             getUserInfo(token);
         } else {
             loginButton.textContent = "登入/註冊";
@@ -87,37 +71,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     updateLoginStatus();
 
-    // 修改 loginButton 點擊事件：已登入則登出，未登入則開啟 pop-up
     loginButton.addEventListener("click", () => {
         const token = localStorage.getItem('jwtToken');
         if (token) {
-            // 登出流程
             localStorage.removeItem('jwtToken');
             updateLoginStatus();
             window.location.reload();
         } else {
-            // 開啟 pop-up 登入畫面
             dialogSignin.style.display = "block";
             dialogSignup.style.display = "none";
             dialogOverlay.classList.add("active");
         }
     });
 
-    // --------------------- 驗證電子信箱格式 ---------------------
     function validateEmail(email) {
-        // 檢查是否符合 "xxx@xxx" 的簡單格式
         const regex = /^[^@]+@[^@]+$/;
         return regex.test(email);
     }
 
-    // --------------------- 使用者註冊 ---------------------
     async function userSignup(name, email, password) {
-        // 前端驗證：所有欄位必填
         if (!name || !email || !password) {
             displayMessage(dialogSignup, 'error', "請填寫完整的註冊資訊");
             return;
         }
-        // 驗證電子信箱格式
         if (!validateEmail(email)) {
             displayMessage(dialogSignup, 'error', "請輸入符合格式的電子信箱");
             return;
@@ -133,11 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 displayMessage(dialogSignup, 'error', "註冊錯誤：" + data.message);
             } else {
                 displayMessage(dialogSignup, 'success', "註冊成功！");
-                // 註冊成功後，1秒後切換到登入的 popup
                 setTimeout(() => {
                     dialogSignup.style.display = "none";
                     dialogSignin.style.display = "block";
-                    displayMessage(dialogSignup, 'success', "");
                 }, 1000);
             }
         } catch (error) {
@@ -145,9 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --------------------- 使用者登入 ---------------------
     async function userSignin(email, password) {
-        // 前端驗證：檢查是否填寫且電子信箱格式正確
         if (!email || !password) {
             displayMessage(dialogSignin, 'error', "請填寫完整的登入資訊");
             return;
@@ -163,8 +135,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
-            
-            // 根據後端回傳的錯誤訊息顯示不同提示
             if (response.status === 400) {
                 if (data.detail === "User not found") {
                     displayMessage(dialogSignin, 'error', "該帳號尚未註冊");
@@ -174,7 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     displayMessage(dialogSignin, 'error', "登入失敗，請稍後再試");
                 }
             } else {
-                // 登入成功，儲存 token 並跳轉
                 localStorage.setItem('jwtToken', data.token);
                 updateLoginStatus();
                 window.location.href = "/";
@@ -183,46 +152,34 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error('登入失敗：', error);
         }
     }
-    
 
-
-    // --------------------- 取得表單與按鈕 ---------------------
     const dialogOverlay = document.getElementById("dialog-overlay");
     const dialogCloseBtns = document.querySelectorAll(".dialog-close-btn");
-
     const dialogSignin = document.getElementById("dialog-signin");
     const dialogSignup = document.getElementById("dialog-signup");
-
     const toSignupBtn = document.getElementById("to-signup");
     const toSigninBtn = document.getElementById("to-signin");
-
     const signinInputs = dialogSignin.querySelectorAll(".input-group input");
     const signinBtn = dialogSignin.querySelector(".dialog-btn");
-
     const signupInputs = dialogSignup.querySelectorAll(".input-group input");
     const signupBtn = dialogSignup.querySelector(".dialog-btn");
 
-    // --------------------- 開啟彈窗與關閉彈窗 ---------------------
-    // （loginButton 的 click 事件已改為根據登入狀態處理）
     dialogCloseBtns.forEach(btn => {
         btn.addEventListener("click", () => {
             dialogOverlay.classList.remove("active");
         });
     });
 
-    // 刪除 dialogOverlay 的點擊事件，避免點擊遮罩層關閉
-    
     toSignupBtn.addEventListener("click", () => {
         dialogSignin.style.display = "none";
         dialogSignup.style.display = "block";
     });
-    
+
     toSigninBtn.addEventListener("click", () => {
         dialogSignin.style.display = "block";
         dialogSignup.style.display = "none";
     });
 
-    // --------------------- 註冊與登入功能 ---------------------
     if (signinBtn) {
         signinBtn.addEventListener("click", () => {
             const email = signinInputs[0].value.trim();
@@ -240,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --------------------- 左右箭頭與拖曳功能 ---------------------
     function addContinuousScroll(button, direction) {
         let intervalId;
         button.addEventListener("mousedown", () => {
@@ -257,7 +213,10 @@ document.addEventListener("DOMContentLoaded", () => {
     addContinuousScroll(leftArrow, "left");
     addContinuousScroll(rightArrow, "right");
 
-    // --------------------- MRT清單與篩選功能 ---------------------
+    function fetchData(url) {
+        return fetch(url).then(res => res.json());
+    }
+
     function loadMRTStations() {
         fetchData('/api/mrts').then(data => {
             mrtListContainer.innerHTML = '';
@@ -271,10 +230,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 mrtListContainer.appendChild(mrtElement);
             });
-        }).catch(error => console.error('Error fetching MRT stations:', error));
+        });
     }
 
-    // --------------------- 關鍵字搜尋功能 ---------------------
     searchButton.addEventListener("click", () => searchAttractions(searchInput.value.trim(), false));
     searchInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") searchButton.click();
@@ -286,118 +244,92 @@ document.addEventListener("DOMContentLoaded", () => {
         loadAttractions(keyword, isMRTSearch);
     }
 
-// --------------------- 加載景點數據 ---------------------
-function loadAttractions(keyword, isMRTSearch = false) {
-    if (isLoading || nextPage === null) return;
-    isLoading = true;
+    function loadAttractions(keyword, isMRTSearch = false) {
+        if (isLoading || nextPage === null) return;
+        isLoading = true;
 
-    fetchData(`/api/attractions?page=${nextPage}&keyword=${keyword}`).then(data => {
-        if (!data.data || data.data.length === 0) {
+        fetchData(`/api/attractions?page=${nextPage}&keyword=${keyword}`).then(data => {
+            if (!data.data || data.data.length === 0) {
+                isLoading = false;
+                return;
+            }
+
+            data.data.forEach(attraction => {
+                if (isMRTSearch && attraction.mrt !== keyword) return;
+                const card = createAttractionCard(attraction);
+                gridContainer.appendChild(card);
+            });
+
+            nextPage = data.nextPage;
             isLoading = false;
-            return;
-        }
-
-        data.data.forEach(attraction => {
-            if (isMRTSearch && attraction.mrt !== keyword) return;
-
-            const card = createAttractionCard(attraction);
-            gridContainer.appendChild(card);
+            observeLastImage(keyword, isMRTSearch);
+        }).catch(error => {
+            console.error("載入景點錯誤:", error);
+            isLoading = false;
         });
+    }
 
-        nextPage = data.nextPage;
-        isLoading = false;
-    }).catch(error => {
-        console.error("載入景點錯誤:", error);
-        isLoading = false;
-    });
-}
+    function createAttractionCard(attraction) {
+        const card = document.createElement("a");
+        card.href = `/attraction/${attraction.id}`;
+        card.classList.add("grid-item", "card-link");
 
-function createAttractionCard(attraction) {
-    // 使用 <a> 作為 grid-item，讓整個卡片可點擊
-    const card = document.createElement("a");
-    card.href = `/attraction/${attraction.id}`;
-    card.classList.add("grid-item", "card-link");
+        const imgContainer = document.createElement("div");
+        imgContainer.classList.add("img-container");
 
-    // 建立圖片區域
-    const imgContainer = document.createElement("div");
-    imgContainer.classList.add("img-container");
+        const img = document.createElement("img");
+        img.src = attraction.images[0];
+        img.alt = attraction.name;
+        imgContainer.appendChild(img);
 
-    const img = document.createElement("img");
-    img.src = attraction.images[0];
-    img.alt = attraction.name;
-    imgContainer.appendChild(img);
+        const title = document.createElement("h3");
+        title.textContent = attraction.name;
+        title.classList.add("title-overlay");
+        imgContainer.appendChild(title);
 
-    // 標題覆蓋
-    const title = document.createElement("h3");
-    title.textContent = attraction.name;
-    title.classList.add("title-overlay");
-    imgContainer.appendChild(title);
+        const infoBar = document.createElement("div");
+        infoBar.classList.add("info-bar");
 
-    // 資訊列（捷運站與分類）
-    const infoBar = document.createElement("div");
-    infoBar.classList.add("info-bar");
+        const mrt = document.createElement("span");
+        mrt.textContent = attraction.mrt;
+        mrt.classList.add("info-text");
 
-    const mrt = document.createElement("span");
-    mrt.textContent = attraction.mrt;
-    mrt.classList.add("info-text");
+        const category = document.createElement("span");
+        category.textContent = attraction.category;
+        category.classList.add("info-text");
 
-    const category = document.createElement("span");
-    category.textContent = attraction.category;
-    category.classList.add("info-text");
+        infoBar.appendChild(mrt);
+        infoBar.appendChild(category);
 
-    infoBar.appendChild(mrt);
-    infoBar.appendChild(category);
+        card.appendChild(imgContainer);
+        card.appendChild(infoBar);
 
-    // 將子元素加入卡片
-    card.appendChild(imgContainer);
-    card.appendChild(infoBar);
+        return card;
+    }
 
-    return card;
-}
+    function observeLastImage(keyword, isMRTSearch) {
+        const cards = document.querySelectorAll(".grid-item img");
+        const lastImage = cards[cards.length - 1];
+        if (observer) observer.disconnect();
 
-    // --------------------- 無限滾動 ---------------------
-    function handleScroll() {
-        lastKnownScrollPosition = window.scrollY;
-
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                const bottom = document.documentElement.scrollHeight - window.innerHeight;
-                if (lastKnownScrollPosition >= bottom - 200 && nextPage !== null && !isLoading) {
-                    loadAttractions(searchInput.value.trim(), false);
-                }
-                ticking = false;
+        if (lastImage) {
+            observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && nextPage !== null && !isLoading) {
+                        loadAttractions(keyword, isMRTSearch);
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: "0px",
+                threshold: 0.1
             });
-            ticking = true;
+
+            observer.observe(lastImage);
         }
     }
 
-    window.addEventListener("scroll", handleScroll);
-
-    // --------------------- MRT 站滑動功能 ---------------------
-    function scrollMRTList(direction) {
-        const visibleWidth = list.clientWidth;
-        list.scrollLeft += direction === "left" ? -visibleWidth * 0.5 : visibleWidth * 0.5;
-    }
-
-    leftArrow.addEventListener("click", () => scrollMRTList("left"));
-    rightArrow.addEventListener("click", () => scrollMRTList("right"));
-
-    // --------------------- 初始載入 ---------------------
+    // 初始載入
     loadMRTStations();
-    loadAttractions('');
-
-    const bottom = document.documentElement.scrollHeight - window.innerHeight;
-    if (window.scrollY >= bottom - 200 && nextPage !== null && !isLoading) {
-        loadAttractions('');
-    }
-
-    // --------------------- 通用的 fetch 函數 ---------------------
-    function fetchData(url) {
-        return fetch(url)
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Request failed', error);
-                throw error;
-            });
-    }
+    loadAttractions('', false);
 });
