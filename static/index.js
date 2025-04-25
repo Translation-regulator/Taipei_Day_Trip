@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const gridContainer = document.querySelector(".row-grid");
     const mrtListContainer = document.querySelector(".list");
 
-    const scrollAmount = 1;
     let observer;
     let nextPage = 0;
     let isLoading = false;
@@ -197,19 +196,59 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function addContinuousScroll(button, direction) {
-        let intervalId;
-        button.addEventListener("mousedown", () => {
-            list.scrollLeft += direction === "left" ? -scrollAmount : scrollAmount;
-            intervalId = setInterval(() => {
-                list.scrollLeft += direction === "left" ? -10 : 10;
-            }, 10);
-        });
 
-        button.addEventListener("mouseup", () => clearInterval(intervalId));
-        button.addEventListener("mouseleave", () => clearInterval(intervalId));
-    }
-
+    
+        function addContinuousScroll(button, direction) {
+            let isScrolling = false;
+        
+            // 根據螢幕大小設定滾動步長
+            const screenWidth = window.innerWidth;
+            const scrollStep = Math.max(5, Math.floor(screenWidth / 5)); 
+        
+            function scroll() {
+                // 每一幀滾動的步長
+                list.scrollLeft += direction === "left" ? -scrollStep : scrollStep;
+        
+                // 只要還在滾動就繼續呼叫 requestAnimationFrame
+                if (isScrolling) {
+                    requestAnimationFrame(scroll);
+                }
+            }
+        
+            button.addEventListener("mousedown", (e) => {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    // 開始滾動
+                    requestAnimationFrame(scroll);
+                }
+            });
+        
+            button.addEventListener("mouseup", () => {
+                isScrolling = false;
+            });
+        
+            button.addEventListener("mouseleave", () => {
+                isScrolling = false;
+            });
+        
+            button.addEventListener("touchstart", (e) => {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    // 開始滾動
+                    requestAnimationFrame(scroll);
+                }
+            });
+        
+            button.addEventListener("touchend", () => {
+                isScrolling = false;
+            });
+        
+            button.addEventListener("touchcancel", () => {
+                isScrolling = false;
+            });
+        }
+        
+    
     addContinuousScroll(leftArrow, "left");
     addContinuousScroll(rightArrow, "right");
 
