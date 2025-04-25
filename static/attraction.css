@@ -8,32 +8,45 @@ body {
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #fff;
-  border-bottom: 1px solid rgba(232, 232, 232, 1);
+  align-items: center;  
+  background-color: #fff;  
+  border-bottom:  1px solid rgba(232, 232, 232, 1);
 }
 
-/* 導航條設定 */
+
 nav {
   display: flex;
   align-items: center;
   width: 1200px;
   justify-content: space-between;
+  
 
 }
 
 .nav-title {
   font-size: 30px;
   color: #448899;
+  line-height: 34px;
   font-weight: 700;
-  padding: 10px 0;
+  padding: 10px 0px;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   cursor: pointer;
 }
 
-nav div {
+nav div{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-right {
   display: flex;
   align-items: center;
+  width: 175px;
+  height: 34px;
+
 }
 
 .nav-reserve, .nav-login {
@@ -50,12 +63,8 @@ nav div {
 
 .nav-reserve:hover,
 .nav-login:hover {
-    color: rgba(51, 51, 51, 1); 
-    font-weight: 600;
-}
-
-.nav-login {
-  padding-right: 0;
+  color: rgba(51, 51, 51, 1); 
+  font-weight: 600;
 }
 
 /* 景點圖片區域 */
@@ -464,9 +473,6 @@ footer {
 
 /* 響應式設定 */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
   .attraction-container {
     flex-direction: column;
     width: 100%;
