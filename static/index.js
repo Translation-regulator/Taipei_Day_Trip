@@ -163,19 +163,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ email, password })
             });
             const data = await response.json();
-            if (data.error) {
-                displayMessage(dialogSignin, 'error', "請輸入正確的電子信箱或密碼");
+            
+            // 根據後端回傳的錯誤訊息顯示不同提示
+            if (response.status === 400) {
+                if (data.detail === "User not found") {
+                    displayMessage(dialogSignin, 'error', "該帳號尚未註冊");
+                } else if (data.detail === "Invalid credentials") {
+                    displayMessage(dialogSignin, 'error', "請輸入正確的電子信箱或密碼");
+                } else {
+                    displayMessage(dialogSignin, 'error', "登入失敗，請稍後再試");
+                }
             } else {
+                // 登入成功，儲存 token 並跳轉
                 localStorage.setItem('jwtToken', data.token);
                 updateLoginStatus();
-                // 登入成功直接跳轉回首頁
                 window.location.href = "/";
             }
         } catch (error) {
             console.error('登入失敗：', error);
         }
     }
-
+    
 
 
     // --------------------- 取得表單與按鈕 ---------------------

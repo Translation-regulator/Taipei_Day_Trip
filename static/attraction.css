@@ -2,7 +2,6 @@
 body {
   font-family: 'Noto Sans TC';
   margin: 0;
-  padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
 }
 
 /* 主要容器設定 */
@@ -315,10 +314,6 @@ input[type="radio"]:checked {
 /* footer */
 footer {
   background: rgba(117, 117, 117, 1);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   z-index: 1000;
   display: flex;
   justify-content: center;

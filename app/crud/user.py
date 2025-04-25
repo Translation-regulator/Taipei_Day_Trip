@@ -50,8 +50,10 @@ def authenticate_user(email, password):
         with conn.cursor() as c:
             c.execute("SELECT * FROM users WHERE email=%s", (email,))
             user = c.fetchone()
-            if not user or not bcrypt.checkpw(password.encode(), user["password_hash"].encode()):
-                return None, "帳號或密碼錯誤"
+            if not user:
+                return None, "User not found"  # 如果沒有找到使用者，回傳 "User not found"
+            if not bcrypt.checkpw(password.encode(), user["password_hash"].encode()):
+                return None, "Invalid credentials"  # 如果密碼不匹配，回傳 "Invalid credentials"
             payload = {
                 "id": user["id"],
                 "name": user["name"],
@@ -60,5 +62,11 @@ def authenticate_user(email, password):
             }
             token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
             return token, None
+    except Exception as e:
+        logging.error("登入時發生錯誤：%s", e)
+        return None, "伺服器內部錯誤"
     finally:
         conn.close()
+
+
+

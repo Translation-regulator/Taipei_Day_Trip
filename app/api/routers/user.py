@@ -18,6 +18,7 @@ def signin(user: UserLogin):
     """使用者登入"""
     token, msg = authenticate_user(user.email, user.password)
     if not token:
+        # 如果沒有返回 token，表示登入失敗，拋出錯誤
         raise HTTPException(status_code=400, detail=msg)
     return {"token": token}
 
