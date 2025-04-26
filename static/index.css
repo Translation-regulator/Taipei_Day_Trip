@@ -1,6 +1,16 @@
-body {
+html, body {
     font-family: 'Noto Sans TC';
     margin:0;
+    height: 100%;
+}
+
+body {
+    display: flex; /*使物件依序排列*/
+    flex-direction: column; /*使物件垂直排列*/
+  }
+
+main {
+    flex-grow: 1;
 }
 
 .container {
@@ -131,6 +141,7 @@ nav div{
     box-sizing: border-box;
 }
 
+
   /* 讓 input 自動填滿剩餘空間，並能縮到更小 */
 .search-box input {
     width: 400px;
@@ -147,6 +158,11 @@ nav div{
     line-height: 13.3px;
     vertical-align: middle;
     color: rgba(117, 117, 117, 1);
+}
+
+.search-box input:focus {
+    outline: none;
+    border: none;
 }
 
 .search-box button {

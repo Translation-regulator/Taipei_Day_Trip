@@ -1,7 +1,16 @@
-/* 頁面基本樣式 */
-body {
+html, body {
   font-family: 'Noto Sans TC';
-  margin: 0;
+  margin:0;
+  height: 100%;
+}
+
+body {
+  display: flex; /*使物件依序排列*/
+  flex-direction: column; /*使物件垂直排列*/
+}
+
+main {
+  flex-grow: 1;
 }
 
 /* 主要容器設定 */
