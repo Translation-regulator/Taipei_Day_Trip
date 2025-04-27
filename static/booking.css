@@ -1,80 +1,62 @@
-html, body {
+/* 統一 Box-Sizing 設定 */
+html {
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* 頁面基本樣式 */
+body {
     font-family: 'Noto Sans TC';
-    margin:0;
-    height: 100%;
-  }
-  
-  body {
-    display: flex; /*使物件依序排列*/
-    flex-direction: column; /*使物件垂直排列*/
-  }
-  
-  main {
-    flex-grow: 1;
-  }
-  
-  /* 主要容器設定 */
-  .container {
+    margin: 0;
+    padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
+    overflow-x: hidden;  /* 如有必要，可隱藏水平捲軸 */
+}
+
+/* 主要容器設定 */
+.container {
     display: flex;
     justify-content: center;
-    align-items: center;  
-    background-color: #fff;  
-    border-bottom:  1px solid rgba(232, 232, 232, 1);
-  }
-  
-  
-  nav {
+    align-items: center;
+    background-color: #fff;
+    border-bottom: 1px solid rgba(232, 232, 232, 1);
+}
+
+/* 導航條設定 */
+nav {
     display: flex;
     align-items: center;
-    width: 1200px;
+    max-width: 1200px;
+    width: 90%;
     justify-content: space-between;
-    
-  
-  }
-  
-  .nav-title {
+}
+
+.nav-title {
     font-size: 30px;
     color: #448899;
-    line-height: 34px;
     font-weight: 700;
-    padding: 10px 0px;
-    justify-content: center;
-    align-items: center;
+    padding: 10px 0;
     text-align: center;
     cursor: pointer;
-  }
-  
-  nav div{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .nav-right {
+}
+
+nav div {
     display: flex;
     align-items: center;
-    width: 175px;
-    height: 34px;
-  
-  }
-  
-  .nav-reserve, .nav-login {
+}
+
+.nav-reserve, .nav-login {
     font-weight: 500;
     font-size: 16px;
-    line-height: 13.3px;
     padding: 10px;
-    justify-content: center;
-    align-items: center;
     cursor: pointer;
-    transition: color 0.2s ease; 
-    color: rgba(102, 102, 102, 1);
-  }
-  
-  .nav-reserve:hover,
-  .nav-login:hover {
-    color: rgba(51, 51, 51, 1); 
-    font-weight: 600;
-  }
+}
+
+.nav-login {
+    padding-right: 0;
+}
 
 main {
     margin: 0 auto;
