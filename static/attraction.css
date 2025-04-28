@@ -1,51 +1,79 @@
-/* 頁面基本樣式 */
-body {
+html, body {
   font-family: 'Noto Sans TC';
-  margin: 0;
-  padding-bottom: 80px; /* 留出空間讓 footer 不會蓋過圖片 */
+  margin:0;
+  height: 100%;
+}
+
+body {
+  display: flex; /*使物件依序排列*/
+  flex-direction: column; /*使物件垂直排列*/
+}
+
+main {
+  flex-grow: 1;
 }
 
 /* 主要容器設定 */
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #fff;
-  border-bottom: 1px solid rgba(232, 232, 232, 1);
+  align-items: center;  
+  background-color: #fff;  
+  border-bottom:  1px solid rgba(232, 232, 232, 1);
 }
 
-/* 導航條設定 */
+
 nav {
   display: flex;
   align-items: center;
-  max-width: 1200px;
-  width: 90%;
+  width: 1200px;
   justify-content: space-between;
+  
+
 }
 
 .nav-title {
   font-size: 30px;
   color: #448899;
+  line-height: 34px;
   font-weight: 700;
-  padding: 10px 0;
+  padding: 10px 0px;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   cursor: pointer;
 }
 
-nav div {
+nav div{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-right {
   display: flex;
   align-items: center;
+  width: 175px;
+  height: 34px;
+
 }
 
 .nav-reserve, .nav-login {
   font-weight: 500;
   font-size: 16px;
+  line-height: 13.3px;
   padding: 10px;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
+  transition: color 0.2s ease; 
+  color: rgba(102, 102, 102, 1);
 }
 
-.nav-login {
-  padding-right: 0;
+.nav-reserve:hover,
+.nav-login:hover {
+  color: rgba(51, 51, 51, 1); 
+  font-weight: 600;
 }
 
 /* 景點圖片區域 */
@@ -84,14 +112,12 @@ nav div {
   left: 0;
 }
 
-/* 合併 attraction-info 相關設定 */
 .attraction-info {
   width: 90% !important;
   max-width: 600px;
   margin-left: auto;
 }
 
-/* 箭頭樣式 */
 .arrow-left, .arrow-right {
   position: absolute;
   top: 50%;
@@ -306,10 +332,6 @@ input[type="radio"]:checked {
 /* footer */
 footer {
   background: rgba(117, 117, 117, 1);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   z-index: 1000;
   display: flex;
   justify-content: center;
@@ -460,9 +482,6 @@ footer {
 
 /* 響應式設定 */
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
   .attraction-container {
     flex-direction: column;
     width: 100%;

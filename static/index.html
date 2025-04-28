@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>台北一日遊</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/style.css"/>
+  <link rel="stylesheet" href="/static/index.css"/>
   <link rel="shortcut icon" href="#">
-  <script src="/static/script.js" defer></script>
+  <script src="/static/index.js" defer></script>
 </head>
 <body>
 <main>
@@ -24,22 +24,24 @@
   <div class="hero">
     <div class="img-container-hero">
       <div class="overlay">
-        <div class="slogan">
           <div class="slogan-up">輕鬆享受台北一日悠閒</div>
           <div class="slogan-down">探索每個角落，體驗城市的深度旅遊行程</div>
           <div class="search-box">
             <input type="text" id="search-input" placeholder="輸入景點名稱查詢" />
             <button id="search-button"></button> 
           </div>
-        </div>
       </div>
     </div>
   </div>
 
   <div class="list-bar">
-      <img src="/static/image/left-row.png" class="arrow" style="padding-left: 15px;" />
+      <img src="/static/image/left-arrow-MRT-list.png" 
+      class="arrow" style="padding-left: 15px;"
+      onmouseover="this.src='/static/image/left-arrow-MRT-list-hovered.png'" onmouseout="this.src='/static/image/left-arrow-MRT-list.png'" />
       <div class="list"></div>
-      <img src="/static/image/right-row.png" class="arrow" style="padding-right: 15px;" />
+      <img src="/static/image/right-arrow-MRT-list.png" 
+      class="arrow" style="padding-right: 15px;" 
+      onmouseover="this.src='/static/image/right-arrow-MRT-list-hovered.png'" onmouseout="this.src='/static/image/right-arrow-MRT-list.png'"/>
   </div>
 
   

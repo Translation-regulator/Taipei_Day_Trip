@@ -205,12 +205,6 @@ dialogCloseBtns.forEach(btn => {
     dialogOverlay.classList.remove("active");
   });
 });
-// (可選) 點擊遮罩層也關閉彈窗
-dialogOverlay.addEventListener("click", (event) => {
-  if (event.target === dialogOverlay) {
-    dialogOverlay.classList.remove("active");
-  }
-});
 
 // 切換表單
 toSignupBtn.addEventListener("click", () => {
@@ -312,6 +306,64 @@ async function userSignup(name, email, password) {
     console.error('註冊失敗：', error);
   }
 }
+
+async function userSignin(email, password) {
+  // 前端驗證：檢查是否填寫且電子信箱格式正確
+  if (!email || !password) {
+      displayMessage(dialogSignin, 'error', "請填寫完整的登入資訊");
+      return;
+  }
+  if (!validateEmail(email)) {
+      displayMessage(dialogSignin, 'error', "請輸入符合格式的電子信箱");
+      return;
+  }
+
+  try {
+      const response = await fetch('/api/user/auth', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      
+      // 根據後端回傳的錯誤訊息顯示不同提示
+      if (response.status === 400) {
+          if (data.detail === "User not found") {
+              displayMessage(dialogSignin, 'error', "該帳號尚未註冊");
+          } else if (data.detail === "Invalid credentials") {
+              displayMessage(dialogSignin, 'error', "請輸入正確的電子信箱或密碼");
+          } else {
+              displayMessage(dialogSignin, 'error', "登入失敗，請稍後再試");
+          }
+      } else {
+          // 登入成功，儲存 token 並儲存當前頁面 URL
+          localStorage.setItem('jwtToken', data.token);
+
+          // 儲存當前頁面 URL，若無則回到首頁
+          const currentPage = window.location.href;
+          localStorage.setItem('redirectAfterLogin', currentPage);
+
+          updateLoginStatus();
+
+          // 關閉登入彈窗
+          dialogSignin.style.display = "none";
+          dialogOverlay.classList.remove("active");
+      }
+  } catch (error) {
+      console.error('登入失敗：', error);
+  }
+}
+
+// 登入後檢查是否有儲存的頁面 URL，若有則跳轉
+window.addEventListener('load', () => {
+  const redirectUrl = localStorage.getItem('redirectAfterLogin');
+  if (redirectUrl) {
+    localStorage.removeItem('redirectAfterLogin');
+    window.location.href = redirectUrl;
+  }
+});
+
+
 
 // 綁定註冊按鈕事件
 if (signupBtn) {

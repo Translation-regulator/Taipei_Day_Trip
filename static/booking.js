@@ -44,57 +44,59 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // --------------------- 取得預定行程資訊 ---------------------
-  async function fetchBookingInfo() {
-    try {
-      const response = await fetch("/api/booking", {
-        method: "GET",
-        headers: { Authorization: "Bearer " + token },
-      });
-      if (!response.ok) throw new Error("Network response was not ok");
-      const result = await response.json();
+// --------------------- 取得預定行程資訊 ---------------------
+async function fetchBookingInfo() {
+  try {
+    const response = await fetch("/api/booking", {
+      method: "GET",
+      headers: { Authorization: "Bearer " + token },
+    });
+    if (!response.ok) throw new Error("Network response was not ok");
+    const result = await response.json();
 
-      if (result.data) {
-        // 存成全域，供後續付款流程使用
-        window.bookingData = result.data;
-        updateBookingPage(result.data);
-      } else {
-        // 無預定行程，顯示空狀態
-        document.querySelector(".booking-empty").style.display = "block";
-        document.querySelector(".booking").style.display = "none";
-        document.querySelector(".contact-info").style.display = "none";
-        document.querySelector(".credit-card-info").style.display = "none";
-        document.querySelector(".booking-terms").style.display = "none";
-        document.querySelectorAll(".booking-hr").forEach(hr => hr.style.display = "none");
+    let userName = "使用者"; // 設定預設的使用者名稱
 
-        // 顯示使用者名稱
-        const userRes = await fetch("/api/user/auth", {
-          method: "GET",
-          headers: { Authorization: "Bearer " + token },
-        });
-        if (userRes.ok) {
-          const userJson = await userRes.json();
-          const userName = userJson.data?.name || "使用者";
-          const header = document.querySelector("header.section-container");
-          if (header) {
-            header.textContent = `您好，${userName}，目前沒有任何預定行程`;
-          }
-        }
+    // 取得使用者資訊
+    const userRes = await fetch("/api/user/auth", {
+      method: "GET",
+      headers: { Authorization: "Bearer " + token },
+    });
+    if (userRes.ok) {
+      const userJson = await userRes.json();
+      userName = userJson.data?.name || "使用者"; // 如果有資料，更新使用者名稱
+    }
+
+    if (result.data) {
+      // 有預定行程，顯示行程資料
+      window.bookingData = result.data;
+      updateBookingPage(result.data, userName); // 傳遞預定資料和使用者名稱
+    } else {
+      // 無預定行程，顯示空狀態
+      document.querySelector(".booking-empty").style.display = "block";
+      document.querySelector(".booking").style.display = "none";
+      document.querySelector(".contact-info").style.display = "none";
+      document.querySelector(".credit-card-info").style.display = "none";
+      document.querySelector(".booking-terms").style.display = "none";
+      document.querySelectorAll(".booking-hr").forEach(hr => hr.style.display = "none");
+
+      const header = document.querySelector("header.section-container");
+      if (header) {
+        header.textContent = `您好，${userName}，目前沒有任何預定行程`;
       }
-    } catch (error) {
-      console.error("取得預定行程失敗：", error);
     }
+  } catch (error) {
+    console.error("取得預定行程失敗：", error);
   }
-  fetchBookingInfo();
+}
 
-  // --------------------- 更新預定行程頁面 ---------------------
-  function updateBookingPage(bookingInfo) {
-    // 使用者名稱
-    const header = document.querySelector("header.section-container");
-    const userName = bookingInfo.userName || "使用者";
-    if (header) {
-      header.textContent = `您好，${userName}，待預定的行程如下：`;
-    }
+fetchBookingInfo();
+
+// --------------------- 更新預定行程頁面 ---------------------
+function updateBookingPage(bookingInfo, userName) {
+  const header = document.querySelector("header.section-container");
+  if (header) {
+    header.textContent = `您好，${userName}，待預定的行程如下：`; // 使用傳遞的 userName
+  }
 
     // 景點名稱
     const bookingTitle = document.querySelector(".booking-title");
@@ -256,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 5. 呼叫後端建立訂單並付款
       try {
-        const resp = await fetch('/api/orders', {
+        const resp = await fetch('/api/order', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
