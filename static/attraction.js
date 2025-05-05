@@ -60,6 +60,20 @@ async function fetchAttractionDetails(attractionId) {
   }
 }
 
+// 設定只能選今天以後的日期以及預設選擇上半天
+window.addEventListener('load', () => {
+
+  optionA.checked = true;
+  updateFee(); 
+
+  const today = new Date().toISOString().split('T')[0]; 
+  dateInput.setAttribute('min', today);
+
+  fetchAttractionDetails(attractionId);
+  setupEventListeners();
+});
+
+
 function renderAttractionDetails(attraction) {
   const { name, category, mrt, description, address, transport, images: attractionImages } = attraction;
   
@@ -121,9 +135,19 @@ function changeImage(index) {
   } else {
     currentImageIndex = index;
   }
-  imageContainer.style.backgroundImage = `url(${images[currentImageIndex]})`;
-  updateDotStyle();
+
+  // 先淡出圖片
+  imageContainer.classList.add('fade-out');
+
+  // 等淡出結束後再換圖
+  setTimeout(() => {
+    // 確保圖片 URL 正確更新
+    imageContainer.style.backgroundImage = `url(${images[currentImageIndex]})`;
+    imageContainer.classList.remove('fade-out'); // 淡入新圖片
+    updateDotStyle();
+  }, 500); // 300ms 是為了讓淡出動畫完成
 }
+
 
 function updateDotStyle() {
   const dots = imageDots.querySelectorAll('.dot');
