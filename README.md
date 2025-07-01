@@ -52,6 +52,18 @@ This project simulates a travel platform where users can:
 3. Backend starts FastAPI server
 4. Frontend served via Nginx (or static)
 5. MySQL handles data operations
+
+## Demo
+### Infinite Scroll
+Load new attraction pages as the user scrolls with the mouse.
+![Auto Scroll](./README_images/auto_scroll.gif)
+
+### Search by Keyword
+Use the search bar and the scrollable list in the center to browse attractions.
+![Click Atttraction](./README_images/click_attraction.gif)
+
+
+
 ## Contact
 - Author: Conan Chang (張兆丞)
 - Email: changchaocheng870405@gmail.com
