@@ -1,0 +1,550 @@
+html, body {
+    font-family: 'Noto Sans TC';
+    margin:0;
+    height: 100%;
+}
+
+body {
+    display: flex; /*使物件依序排列*/
+    flex-direction: column; /*使物件垂直排列*/
+  }
+
+main {
+    flex-grow: 1;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;  
+    left: 0;  
+    right: 0;  
+    z-index: 1000;  
+    background-color: #fff;  
+}
+
+
+nav {
+    display: flex;
+    align-items: center;
+    width: 1200px;
+    justify-content: space-between;
+    
+
+}
+
+.nav-title {
+    font-size: 30px;
+    color: #448899;
+    line-height: 34px;
+    font-weight: 700;
+    padding: 10px 0px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+nav div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    width: 175px;
+    height: 34px;
+
+}
+
+.nav-reserve, .nav-login {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 13.3px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: color 0.2s ease; 
+    color: rgba(102, 102, 102, 1);
+}
+
+.nav-reserve:hover,
+.nav-login:hover {
+    color: rgba(51, 51, 51, 1); 
+    font-weight: 600;
+}
+
+.hero {
+    width: 100%;
+    height: 400px;
+    background-image: url("/static/image/welcome.png"); /* 設置背景圖片 */
+    background-size: cover; /* 覆蓋整個區域 */
+    background-position: center; /* 置中對齊 */
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+}
+
+.img-container-hero {
+    width: 1200px;
+    height: 169px;
+    display: flex;
+    align-items: center;
+}
+
+.overlay {
+    color: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin-right: 10px;
+}
+
+.slogan-up {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 24px;
+    padding-bottom: 20px;
+    font-family: 'Noto Sans TC';
+    line-height: 24px;
+    vertical-align: middle;
+
+
+}
+
+.slogan-down {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    padding-bottom: 30px;
+    font-family: 'Noto Sans TC';
+    vertical-align: middle;
+
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;          /* 滿寬度，可跟著父容器走 */
+    max-width: 460px;     /* 但不超過460px */
+    height: 46px;
+    box-sizing: border-box;
+}
+
+
+.search-box input {
+    flex: 1;  
+    min-width: 0; 
+    height: 46px;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0px 0px 20px 0px rgba(170, 187, 204, 1);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border: none;
+    font-family: "Noto Sans TC", sans-serif;
+    padding-left: 15px;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 13.3px;
+    color: rgba(117, 117, 117, 1);
+    box-sizing: border-box;
+}
+
+.search-box input:focus {
+    outline: none;
+    border: none;
+}
+
+.search-box button {
+flex: 0 0 60px;       /* 固定60px，不縮放也不撐開 */
+height: 100%;
+border: none;
+background: url('/static/image/btn.png') no-repeat center;
+background-size: contain;
+cursor: pointer;
+}
+
+
+.list-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1200px;
+    height: 50px;
+    margin: 0 auto;
+    padding-top: 20px;
+}
+
+.arrow {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+
+
+.list {
+    display: flex;
+    align-items: center;
+    width: 1106px; /* 固定寬度 */
+    height: 50px;
+    overflow: hidden;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.list::-webkit-scrollbar {
+    display: none; /* 隱藏滾動條 */
+}
+
+.list div {
+    font-family: 'Noto Sans TC';
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 13.3px;
+    color: rgba(102, 102, 102, 1);
+    transition: color 0.2s ease; 
+}
+
+.list div:hover {
+    color: rgba(51, 51, 51, 1); 
+    font-weight: 600;
+}
+
+
+.row-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 15px;
+    justify-content: center;
+
+}
+
+.grid-item {
+    width: 100%;
+    background: #fff;
+    overflow: hidden;
+    border-radius: 5px;
+    border: 1px solid rgba(232, 232, 232, 1); /* 套用圖片的 border */
+}
+
+.card-link {
+    display: block;       
+    text-decoration: none;
+    color: inherit;       
+  }
+
+.grid-item:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
+}
+
+
+.img-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.title-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 8px;
+    font-size: 16px;
+    margin:0;
+    box-sizing: border-box;
+}
+
+.info-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    background: rgba(255, 255, 255, 1);
+    font-size: 14px;
+}
+
+.info-text {
+    font-size: 16px;
+    color: rgba(117, 117, 117, 1);
+    font-weight: 500;
+}
+
+.grid-item:hover .info-text {
+    color: rgba(51, 51, 51, 1);
+    font-weight: 600;
+}
+
+footer {
+    background: rgba(117, 117, 117, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 20px 0;  /* 根據需要調整內邊距 */
+    margin-top: 20px;  /* 新增間距，讓 footer 與上方內容有 15px 的間距 */
+}
+
+.footer-text {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 1);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 最外層半透明遮罩 */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Dialog 容器 */
+.dialog-box {
+    background: rgba(255, 255, 255, 1);
+    width: 340px;
+    border-radius: 5px;
+    position: absolute;
+    height: auto; /* 調整高度 */
+    box-shadow: 0px 4px 60px 0px rgba(170, 170, 170, 1);
+    top: 80px; /* 讓表單固定距離頁面頂端 80px */
+
+
+}
+
+.dialog-box-decorator-bar {
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+    border-top-left-radius: 5px;  
+    border-top-right-radius: 5px; 
+}
+
+.dialog-content {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-content .input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-inner-content {
+    position: relative; /* 讓內部元素可以用 absolute 定位 */
+    text-align: center;
+    width: 100%;
+}
+
+
+.dialog-close-btn {
+    position: absolute;
+    top: 0px;  /* 向上移動 */
+    right:0px; /* 向右移動 */
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    width: 16px;
+    height: 16px;
+}
+
+
+/* 標題樣式 */
+.dialog-content h2 {
+    font-weight: 700;
+    font-size: 24px;
+    color: rgba(102, 102, 102, 1);
+    margin-bottom: 15px; 
+    margin-top:0px;
+}
+
+/* 輸入框樣式 */
+.input-group {
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    width: 310px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 13.3px;
+    border: 1px solid rgba(204, 204, 204, 1);
+    border-radius: 5px;
+}
+
+/* 按鈕樣式 */
+.dialog-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(68, 136, 153, 1);
+    color: rgba(255, 255, 255, 1);
+    border: none;
+    border-radius: 5px;
+    font-size: 19px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+/* 切換註冊/登入文字樣式 */
+.dialog-switch {
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 16px;
+    line-height: 13.3px;
+    font-weight: 500;
+    color: rgba(102, 102, 102, 1);
+}
+
+.dialog-switch span {
+    color: rgba(102, 102, 102, 1);
+    cursor: pointer;
+}
+
+/* 顯示彈窗時的 active 類 */
+.dialog-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+
+/* 平板模式 */
+@media (max-width: 1200px) {
+    .nav-title {
+        padding-left: 10px;
+    }
+
+    .overlay {
+        width: 100%; /* 讓容器寬度為100% */
+        
+    }
+
+    .overlay {
+        margin: 0 ;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .img-container-hero {
+        width: 100%;
+    }
+
+
+    .row-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .list-bar {
+        width: calc(100% - 20px);
+
+    }
+}
+
+/* 手機模式 */
+@media (max-width: 360px) {
+    .nav-title {
+        font-size: 20px;
+        line-height: 28px;
+    }
+
+    .nav-login, .nav-reserve {
+        font-size: 14px;
+    }
+
+    .img-container-hero{
+        width: 100%;
+        display: flex;
+
+    }
+    .hero {
+        width: 100%;
+        height: 320px;
+        background-image: url("/static/image/mobile-welcome.png"); 
+        background-size: cover; 
+        background-position: center; 
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .overlay {
+        margin: 0 ;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .list-bar {
+        width: calc(100% - 20px);
+        margin:0;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .row-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dialog-box {
+        width: calc(100% - 20px); /* 左右各空出 10px */
+        max-width: 340px; /* 避免在較大手機上過寬 */
+    }
+
+    .input-group input {
+        width: 100%;
+    }
+}
+
+.arrow {
+    padding: 0 !important;
+}

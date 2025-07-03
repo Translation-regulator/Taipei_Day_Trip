@@ -1,0 +1,583 @@
+html, body {
+  font-family: 'Noto Sans TC';
+  margin:0;
+  height: 100%;
+}
+
+body {
+  display: flex; /*使物件依序排列*/
+  flex-direction: column; /*使物件垂直排列*/
+}
+
+main {
+  flex-grow: 1;
+}
+
+/* 主要容器設定 */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+  background-color: #fff;  
+  border-bottom:  1px solid rgba(232, 232, 232, 1);
+}
+
+
+nav {
+  display: flex;
+  align-items: center;
+  width: 1200px;
+  justify-content: space-between;
+  
+
+}
+
+.nav-title {
+  font-size: 30px;
+  color: #448899;
+  line-height: 34px;
+  font-weight: 700;
+  padding: 10px 0px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+}
+
+nav div{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  width: 175px;
+  height: 34px;
+
+}
+
+.nav-reserve, .nav-login {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 13.3px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: color 0.2s ease; 
+  color: rgba(102, 102, 102, 1);
+}
+
+.nav-reserve:hover,
+.nav-login:hover {
+  color: rgba(51, 51, 51, 1); 
+  font-weight: 600;
+}
+
+/* 景點圖片區域 */
+.attraction-outer-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.attraction-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(232, 232, 232, 1);
+  padding-bottom: 40px;
+}
+
+.attraction-image-container {
+  width: 100%;
+  max-width: 540px;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  margin-right: 20px;
+}
+
+.attraction-image {
+  width: 100%;
+  height: 400px; /* 你可以根據需要調整 */
+  background-size: cover;
+  background-position: center;
+  transition: 0.8s ease-in-out, opacity 0.8s ease-in-out;
+  opacity: 1;
+}
+
+.attraction-image.fade-out {
+  opacity: 0;
+}
+
+
+.attraction-info {
+  width: 90% !important;
+  max-width: 600px;
+  margin-left: auto;
+}
+
+.arrow-left, .arrow-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.arrow-left {
+  left: 10px;
+  background-image: url('/static/image/left-row.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  
+}
+
+.arrow-right {
+  right: 10px;
+  background-image: url('/static/image/right-row.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 點點導航 */
+.image-dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.image-dots .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(204, 204, 204, 1);
+  cursor: pointer;
+}
+
+.image-dots .dot.active {
+  background-color: rgba(0, 0, 0, 1);
+  border: 1px solid white;
+}
+
+.attraction-title {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 24px;
+  color: rgba(102, 102, 102, 1);
+  padding-bottom: 20px;
+}
+
+.attraction-category-mrt {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 13.3px;
+  color: rgba(102, 102, 102, 1);
+  padding-bottom: 20px;
+}
+
+/* 訂購區塊 */
+.order {
+  background-color: rgba(232, 232, 232, 1);
+  max-width: 600px;
+  padding: 20px;
+}
+
+.order-body {
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 700;
+  padding: 10px 0;
+}
+
+.order-med {
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  font-weight: 400;
+  padding: 10px 0;
+}
+
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 700;
+  color: rgba(102, 102, 102, 1);
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+input[type="date"] {
+  width: 193px;
+  height: 35px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.options-container > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.option label {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  background: white;
+  border: 2px solid rgba(68, 136, 153, 1);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+input[type="radio"]:checked {
+  background: rgba(68, 136, 153, 1);
+  border-color: rgba(68, 136, 153, 1);
+}
+
+.fee-label {
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+}
+
+.currency {
+  font-weight: 400;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+}
+
+.order-button {
+  padding: 10px 20px;
+  background-color: rgba(68, 136, 153, 1);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 19px;
+  margin-top: 20px;
+  width: 154px;
+}
+
+.attraction-description-container {
+  max-width: 1200px;
+  width: 90%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-top: 20px;
+  text-align: justify;
+}
+
+.attraction-address-title,
+.attraction-transport-title {
+  font-family: 'Noto Sans TC';
+  font-weight: 700;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  padding-top: 30px;
+  padding-bottom: 10px;
+}
+
+.attraction-description,
+.attraction-address,
+.attraction-transport {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: rgba(102, 102, 102, 1);
+  line-height: 1.5;
+}
+
+/* footer */
+footer {
+  background: rgba(117, 117, 117, 1);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 15px;
+}
+
+.footer-text {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 1);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 最外層半透明遮罩 */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Dialog 容器 */
+.dialog-box {
+  background: rgba(255, 255, 255, 1);
+  width: 340px;
+  border-radius: 5px;
+  position: absolute;
+  height: auto; /* 調整高度 */
+  box-shadow: 0px 4px 60px 0px rgba(170, 170, 170, 1);
+  top:80px;
+
+}
+
+.dialog-box-decorator-bar {
+  width: 100%;
+  height: 10px;
+  background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+  border-top-left-radius: 5px;  
+  border-top-right-radius: 5px; 
+}
+
+.dialog-content {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-content .input-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box; /* 避免 padding 影響寬度 */
+}
+
+.dialog-inner-content {
+  position: relative; /* 讓內部元素可以用 absolute 定位 */
+  text-align: center;
+  width: 100%;
+}
+
+
+.dialog-close-btn {
+  position: absolute;
+  top: 0px;  /* 向上移動 */
+  right:0px; /* 向右移動 */
+  background: transparent;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  width: 16px;
+  height: 16px;
+}
+
+
+/* 標題樣式 */
+.dialog-content h2 {
+  font-weight: 700;
+  font-size: 24px;
+  color: rgba(102, 102, 102, 1);
+  margin-bottom: 15px; 
+  margin-top:0px;
+}
+
+/* 輸入框樣式 */
+.input-group {
+  margin-bottom: 10px;
+}
+
+.input-group input {
+  width: 310px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 13.3px;
+  border: 1px solid rgba(204, 204, 204, 1);
+  border-radius: 5px;
+}
+
+/* 按鈕樣式 */
+.dialog-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(68, 136, 153, 1);
+  color: rgba(255, 255, 255, 1);
+  border: none;
+  border-radius: 5px;
+  font-size: 19px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+/* 切換註冊/登入文字樣式 */
+.dialog-switch {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  line-height: 13.3px;
+  font-weight: 500;
+  color: rgba(102, 102, 102, 1);
+}
+
+.dialog-switch span {
+  color: rgba(102, 102, 102, 1);
+  cursor: pointer;
+}
+
+/* 顯示彈窗時的 active 類 */
+.dialog-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 響應式設定 */
+@media (max-width: 768px) {
+  .attraction-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  .attraction-outer-container {
+    margin-top: 0;
+  }
+  .attraction-image-container {
+    max-width: 100%;
+    height: 300px;
+  }
+  .attraction-info {
+    max-width: none;
+    width: 90%;
+    padding-top: 20px;
+    margin: 0 auto;
+  }
+  .order {
+    max-width: 100%;
+  }
+  .order-button {
+    width: 30%;
+    font-size: 16px;
+  }
+  .attraction-description-container {
+    padding-top: 30px;
+  }
+}
+
+@media (max-width: 450px) {
+  .order-button {
+    width: 30%;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 370px) {
+  .nav-title {
+    font-size: 20px;
+  }
+  .order-button {
+    width: 40%;
+    font-size: 14px;
+  }
+  .date-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    white-space: nowrap;
+  }
+  .date-picker-container label {
+    font-weight: 700;
+    color: rgba(102, 102, 102, 1);
+    font-size: 16px;
+    white-space: nowrap;
+  }
+  .date-picker-container input[type="date"] {
+    width: 193px;
+    height: 35px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .option label {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  input[type="radio"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .dialog-box {
+    width: calc(100% - 20px); /* 左右各空出 10px */
+    max-width: 340px; /* 避免在較大手機上過寬 */
+  }
+
+  .input-group input {
+    width: 100%;
+  }
+}

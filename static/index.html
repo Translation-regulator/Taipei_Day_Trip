@@ -3,9 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index</title>
+  <title>台北一日遊</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/index.css"/>
+  <link rel="shortcut icon" href="#">
+  <script src="/static/index.js" defer></script>
 </head>
 <body>
+<main>
+  <div class="container">
+    <nav>
+      <div class="nav-title">台北一日遊</div>
+      <div>
+        <div class="nav-reserve">預定行程</div>
+        <div class="nav-login">登入/註冊</div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div class="img-container-hero">
+      <div class="overlay">
+          <div class="slogan-up">輕鬆享受台北一日悠閒</div>
+          <div class="slogan-down">探索每個角落，體驗城市的深度旅遊行程</div>
+          <div class="search-box">
+            <input type="text" id="search-input" placeholder="輸入景點名稱查詢" />
+            <button id="search-button"></button> 
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="list-bar">
+      <img src="/static/image/left-arrow-MRT-list.png" 
+      class="arrow" style="padding-left: 15px;"
+      onmouseover="this.src='/static/image/left-arrow-MRT-list-hovered.png'" onmouseout="this.src='/static/image/left-arrow-MRT-list.png'" />
+      <div class="list"></div>
+      <img src="/static/image/right-arrow-MRT-list.png" 
+      class="arrow" style="padding-right: 15px;" 
+      onmouseover="this.src='/static/image/right-arrow-MRT-list-hovered.png'" onmouseout="this.src='/static/image/right-arrow-MRT-list.png'"/>
+  </div>
+
+  
+  <div class="row-grid"></div>
+</main>
+
+
+<div class="dialog-overlay" id="dialog-overlay">
+  <div class="dialog-box">
+    <div class="dialog-box-decorator-bar"></div>
+    
+
+    <div class="dialog-content" id="dialog-signin">
+      <div class="dialog-inner-content">
+        <h2>登入會員帳號</h2>
+        <div class="dialog-close-btn">
+          <img src="/static/image/close.png" class="dialog-close-btn" id="dialog-close-btn"/>
+        </div>
+        <div class="input-group">
+          <input type="email" placeholder="輸入電子信箱" />
+        </div>
+        <div class="input-group">
+          <input type="password" placeholder="輸入密碼" />
+        </div>
+        <button class="dialog-btn">登入帳號</button>
+        <div class="dialog-switch">
+          還沒有帳戶？<span id="to-signup">點此註冊</span>
+        </div>   
+      </div>                                                          
+    </div> 
+
+    <div class="dialog-content" id="dialog-signup" style="display: none;">
+      <div class="dialog-inner-content">
+        <h2>註冊會員帳號</h2>
+        <img src="/static/image/close.png" class="dialog-close-btn" id="dialog-close-btn"/>
+        <div class="input-group">
+          <input type="text" placeholder="輸入姓名" />
+        </div>
+        <div class="input-group">
+          <input type="email" placeholder="輸入電子郵件" />
+        </div>
+        <div class="input-group">
+          <input type="password" placeholder="輸入密碼" />
+        </div>
+        <button class="dialog-btn">註冊新帳戶</button>
+        <p class="dialog-switch">
+          已經有帳戶了？<span id="to-signin">點此登入</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-text">COPYRIGHT © 2025 台北一日遊</div>
+</footer>
   
 </body>
+
 </html>
